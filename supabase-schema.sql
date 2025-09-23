@@ -114,12 +114,49 @@ CREATE POLICY "Users can insert their own profile" ON user_profiles
 CREATE POLICY "Users can update their own profile" ON user_profiles
   FOR UPDATE USING (auth.uid() = id);
 
+-- Admin policies (admin users can manage everything)
+CREATE POLICY "Admins can manage products" ON products
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM user_profiles 
+      WHERE user_profiles.id = auth.uid() 
+      AND user_profiles.role = 'admin'
+    )
+  );
+
+CREATE POLICY "Admins can view all orders" ON orders
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM user_profiles 
+      WHERE user_profiles.id = auth.uid() 
+      AND user_profiles.role = 'admin'
+    )
+  );
+
+CREATE POLICY "Admins can update orders" ON orders
+  FOR UPDATE USING (
+    EXISTS (
+      SELECT 1 FROM user_profiles 
+      WHERE user_profiles.id = auth.uid() 
+      AND user_profiles.role = 'admin'
+    )
+  );
+
+CREATE POLICY "Admins can view all user profiles" ON user_profiles
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM user_profiles up
+      WHERE up.id = auth.uid() 
+      AND up.role = 'admin'
+    )
+  );
+
 -- Create function to handle user profile creation
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.user_profiles (id, full_name, avatar_url)
-  VALUES (NEW.id, NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'avatar_url');
+  INSERT INTO public.user_profiles (id, full_name, avatar_url, role)
+  VALUES (NEW.id, NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'avatar_url', 'user');
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -250,6 +287,25 @@ INSERT INTO products (name, description, price, image_url, category, stock) VALU
 ('Revlon Lipstick Set', 'Set of 6 long-lasting lipsticks', 299000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 90),
 ('Garnier Micellar Water', 'Gentle makeup remover and cleanser', 119000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 220),
 ('Nivea Sunscreen SPF 50', 'Broad spectrum sun protection', 149000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 190),
+('Pantene Shampoo', 'Smooth & silky hair care', 129000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 250),
+('Dove Body Wash', 'Gentle cleansing body wash', 99000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 300),
+('Aveeno Daily Moisturizer', 'Fragrance-free daily moisturizer', 199000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 180),
+('Clinique Foundation', 'Long-wear foundation with SPF', 399000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 80),
+('Estee Lauder Serum', 'Advanced night repair serum', 899000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 60),
+('MAC Lipstick', 'Classic matte lipstick', 249000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 120),
+('Urban Decay Eyeshadow', 'Naked eyeshadow palette', 599000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 70),
+('Too Faced Mascara', 'Better than sex mascara', 299000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 100),
+('Fenty Beauty Foundation', 'Pro filt''r soft matte foundation', 399000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 90),
+('Glossier Cloud Paint', 'Sheer gel-cream blush', 199000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 110),
+('The Ordinary Niacinamide', '10% niacinamide + 1% zinc', 149000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 200),
+('Paula''s Choice BHA', '2% BHA liquid exfoliant', 299000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 150),
+('Drunk Elephant Vitamin C', 'C-Firma vitamin C day serum', 699000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 80),
+('Sunday Riley Good Genes', 'All-in-one lactic acid treatment', 899000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 70),
+('Tatcha Water Cream', 'Pore-perfecting water cream', 699000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 60),
+('La Mer Moisturizer', 'The moisturizing cream', 2999000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 30),
+('SK-II Facial Treatment', 'Essence with pitera', 1999000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 40),
+('Chanel No. 5 Perfume', 'Classic women''s fragrance', 1299000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 50),
+('Tom Ford Black Orchid', 'Luxury unisex fragrance', 1499000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 45),
 ('Pantene Shampoo', 'Pro-V daily moisture renewal shampoo', 129000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 170),
 ('Aveeno Daily Moisturizer', 'Fragrance-free daily moisturizing lotion', 199000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 140),
 ('CoverGirl Foundation', 'Long-lasting liquid foundation', 179000, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 'Beauty & Health', 110),
@@ -280,3 +336,23 @@ CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
 CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
 CREATE INDEX IF NOT EXISTS idx_user_profiles_role ON user_profiles(role);
+
+-- Instructions for creating admin user:
+-- 1. Create a user in Supabase Auth with email: admin@jonsstore.com and password: admin123456
+-- 2. Run this SQL to make them admin:
+-- UPDATE user_profiles SET role = 'admin' WHERE id = (SELECT id FROM auth.users WHERE email = 'admin@jonsstore.com');
+
+-- Alternative: Create admin user directly (if you have service role key)
+-- INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, created_at, updated_at, raw_user_meta_data)
+-- VALUES (
+--   gen_random_uuid(),
+--   'admin@jonsstore.com',
+--   crypt('admin123456', gen_salt('bf')),
+--   now(),
+--   now(),
+--   now(),
+--   '{"full_name": "Admin User"}'
+-- );
+-- 
+-- Then update the user profile:
+-- UPDATE user_profiles SET role = 'admin' WHERE id = (SELECT id FROM auth.users WHERE email = 'admin@jonsstore.com');

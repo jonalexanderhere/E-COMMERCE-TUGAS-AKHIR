@@ -4,27 +4,31 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-// Development fallback values for when environment variables are not set
-const isDevelopment = process.env.NODE_ENV === 'development'
+// Check if we have real Supabase configuration
 const hasSupabaseConfig = supabaseUrl && supabaseAnonKey && 
   supabaseUrl !== 'https://your-project-id.supabase.co' &&
-  supabaseAnonKey !== 'your-anon-key-here'
+  supabaseAnonKey !== 'your-anon-key-here' &&
+  supabaseUrl.startsWith('https://') &&
+  supabaseAnonKey.length > 20
 
-// Use fallback values in development if no real Supabase config is provided
+// Use fallback values if no real Supabase config is provided
 const finalSupabaseUrl = hasSupabaseConfig ? supabaseUrl : 'https://placeholder.supabase.co'
 const finalSupabaseAnonKey = hasSupabaseConfig ? supabaseAnonKey : 'placeholder-key'
 
-// Create Supabase client
+// Create Supabase client with safe configuration
 export const supabase = createClient(finalSupabaseUrl, finalSupabaseAnonKey, {
   auth: {
-    persistSession: hasSupabaseConfig,
-    autoRefreshToken: hasSupabaseConfig,
-    detectSessionInUrl: hasSupabaseConfig
+    persistSession: Boolean(hasSupabaseConfig),
+    autoRefreshToken: Boolean(hasSupabaseConfig),
+    detectSessionInUrl: Boolean(hasSupabaseConfig)
   }
 })
 
-// Log configuration status
-if (isDevelopment && !hasSupabaseConfig) {
+// Export configuration status for use in components
+export const isSupabaseConfigured = hasSupabaseConfig
+
+// Log configuration status only in development
+if (process.env.NODE_ENV === 'development' && !hasSupabaseConfig) {
   console.warn('⚠️  Development Mode: Using placeholder Supabase configuration')
   console.warn('📝 To use real authentication, please:')
   console.warn('   1. Create a Supabase project at https://supabase.com')

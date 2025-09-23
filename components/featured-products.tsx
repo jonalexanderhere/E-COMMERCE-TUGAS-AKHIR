@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Product } from '@/lib/supabase'
-import { supabase } from '@/lib/supabase'
-import { mockProducts } from '@/lib/mock-data'
+import { useSafeDataFetch } from './safe-supabase'
 import { ProductCard } from '@/components/product-card'
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
@@ -12,27 +11,25 @@ import Link from 'next/link'
 export function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const { fetchProducts, isConfigured } = useSafeDataFetch()
 
   useEffect(() => {
     async function fetchFeaturedProducts() {
       try {
-        // Try to fetch from Supabase first
-        const { data, error } = await supabase
-          .from('products')
-          .select('*')
-          .limit(8)
-          .order('created_at', { ascending: false })
-
+        const { data, error } = await fetchProducts()
+        
         if (error || !data || data.length === 0) {
           // Fallback to mock data
           console.log('Using mock data for products')
+          const { mockProducts } = await import('@/lib/mock-data')
           setProducts(mockProducts.slice(0, 8))
         } else {
-          setProducts(data)
+          setProducts(data.slice(0, 8))
         }
       } catch (error) {
         // Fallback to mock data on error
         console.log('Error fetching products, using mock data:', error)
+        const { mockProducts } = await import('@/lib/mock-data')
         setProducts(mockProducts.slice(0, 8))
       } finally {
         setLoading(false)
@@ -40,7 +37,7 @@ export function FeaturedProducts() {
     }
 
     fetchFeaturedProducts()
-  }, [])
+  }, [fetchProducts])
 
   if (loading) {
     return (

@@ -1,19 +1,18 @@
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
-import { HeroSection } from '@/components/hero-section'
+import { Hero } from '@/components/hero'
 import { FeaturedProducts } from '@/components/featured-products'
-import { CategoriesSection } from '@/components/categories-section'
-import { NewsletterSection } from '@/components/newsletter-section'
+import { CategoriesGrid } from '@/components/categories-grid'
+import { Banner } from '@/components/banner'
 
 export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">
-        <HeroSection />
+        <Hero />
         <FeaturedProducts />
-        <CategoriesSection />
-        <NewsletterSection />
+        <CategoriesGrid />
       </main>
       <Footer />
     </div>

@@ -2,8 +2,9 @@ import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { AdminDashboard } from '@/components/admin-dashboard'
 import AdminGuard from '@/components/admin-guard'
+import dynamic from 'next/dynamic'
 
-export default function AdminPage() {
+function AdminPage() {
   return (
     <AdminGuard>
       <div className="min-h-screen flex flex-col">
@@ -24,3 +25,7 @@ export default function AdminPage() {
     </AdminGuard>
   )
 }
+
+export default dynamic(() => Promise.resolve(AdminPage), {
+  ssr: false
+})

@@ -1,6 +1,7 @@
 'use client'
 
 import { useAuth } from '@/components/providers'
+import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -10,7 +11,7 @@ import { User, Mail, Calendar, Shield, ShoppingBag, Package, CreditCard } from '
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-export default function ProfilePage() {
+function ProfilePage() {
   const { user, signOut } = useAuth()
   const router = useRouter()
   const [isEditing, setIsEditing] = useState(false)
@@ -265,3 +266,7 @@ export default function ProfilePage() {
     </div>
   )
 }
+
+export default dynamic(() => Promise.resolve(ProfilePage), {
+  ssr: false
+})
