@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/components/providers'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -23,6 +23,7 @@ export function RegisterForm() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
+  const { signUp } = useAuth()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -55,28 +56,20 @@ export function RegisterForm() {
     setLoading(true)
 
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          data: {
-            full_name: formData.fullName,
-          }
-        }
-      })
+      const { data, error } = await signUp(formData.email, formData.password)
 
       if (error) {
         toast({
           title: "Registration failed",
-          description: error.message,
+          description: error.message || "Failed to create account",
           variant: "destructive",
         })
       } else {
         toast({
           title: "Account created!",
-          description: "Please check your email to verify your account.",
+          description: "Welcome to JonsStore! You can now start shopping.",
         })
-        router.push('/auth/login')
+        router.push('/')
       }
     } catch (error) {
       toast({

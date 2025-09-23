@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Product } from '@/lib/supabase'
 import { supabase } from '@/lib/supabase'
+import { mockProducts } from '@/lib/mock-data'
 import { ProductCard } from '@/components/product-card'
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
@@ -15,19 +16,24 @@ export function FeaturedProducts() {
   useEffect(() => {
     async function fetchFeaturedProducts() {
       try {
+        // Try to fetch from Supabase first
         const { data, error } = await supabase
           .from('products')
           .select('*')
           .limit(8)
           .order('created_at', { ascending: false })
 
-        if (error) {
-          console.error('Error fetching products:', error)
+        if (error || !data || data.length === 0) {
+          // Fallback to mock data
+          console.log('Using mock data for products')
+          setProducts(mockProducts.slice(0, 8))
         } else {
-          setProducts(data || [])
+          setProducts(data)
         }
       } catch (error) {
-        console.error('Error:', error)
+        // Fallback to mock data on error
+        console.log('Error fetching products, using mock data:', error)
+        setProducts(mockProducts.slice(0, 8))
       } finally {
         setLoading(false)
       }

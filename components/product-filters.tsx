@@ -8,15 +8,9 @@ import { Badge } from '@/components/ui/badge'
 import { Slider } from '@/components/ui/slider'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Search, Filter, X } from 'lucide-react'
+import { mockCategories } from '@/lib/mock-data'
 
-const categories = [
-  'Electronics',
-  'Fashion',
-  'Home & Living',
-  'Sports & Fitness',
-  'Books & Media',
-  'Beauty & Health'
-]
+const categories = mockCategories
 
 const sortOptions = [
   { value: 'created_at', label: 'Newest First' },

@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
+import { mockProducts } from '@/lib/mock-data'
 
 const categories = [
   {
@@ -12,7 +13,7 @@ const categories = [
     description: 'Latest gadgets and tech',
     image: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400&h=300&fit=crop',
     color: 'from-blue-500/20 to-purple-500/20',
-    productCount: 45
+    productCount: mockProducts.filter(p => p.category === 'Electronics').length
   },
   {
     id: 'fashion',
@@ -20,7 +21,7 @@ const categories = [
     description: 'Trendy clothing & accessories',
     image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop',
     color: 'from-pink-500/20 to-rose-500/20',
-    productCount: 32
+    productCount: mockProducts.filter(p => p.category === 'Fashion').length
   },
   {
     id: 'home',
@@ -28,7 +29,7 @@ const categories = [
     description: 'Beautiful home essentials',
     image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop',
     color: 'from-green-500/20 to-emerald-500/20',
-    productCount: 28
+    productCount: mockProducts.filter(p => p.category === 'Home & Living').length
   },
   {
     id: 'sports',
@@ -36,7 +37,7 @@ const categories = [
     description: 'Active lifestyle gear',
     image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
     color: 'from-orange-500/20 to-red-500/20',
-    productCount: 19
+    productCount: mockProducts.filter(p => p.category === 'Sports & Fitness').length
   },
   {
     id: 'books',
@@ -44,7 +45,7 @@ const categories = [
     description: 'Knowledge and entertainment',
     image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=300&fit=crop',
     color: 'from-yellow-500/20 to-amber-500/20',
-    productCount: 67
+    productCount: mockProducts.filter(p => p.category === 'Books & Media').length
   },
   {
     id: 'beauty',
@@ -52,7 +53,7 @@ const categories = [
     description: 'Self-care essentials',
     image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=300&fit=crop',
     color: 'from-purple-500/20 to-indigo-500/20',
-    productCount: 23
+    productCount: mockProducts.filter(p => p.category === 'Beauty & Health').length
   }
 ]
 

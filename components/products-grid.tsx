@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Product } from '@/lib/supabase'
 import { supabase } from '@/lib/supabase'
+import { mockProducts } from '@/lib/mock-data'
 import { ProductCard } from '@/components/product-card'
 import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'
@@ -36,6 +37,7 @@ export function ProductsGrid({
     setLoading(true)
     
     try {
+      // Try to fetch from Supabase first
       let query = supabase
         .from('products')
         .select('*', { count: 'exact' })
@@ -68,8 +70,55 @@ export function ProductsGrid({
 
       const { data, error, count } = await query
 
-      if (error) {
-        console.error('Error fetching products:', error)
+      if (error || !data || data.length === 0) {
+        // Fallback to mock data
+        console.log('Using mock data for products grid')
+        let filteredProducts = [...mockProducts]
+
+        // Apply filters to mock data
+        if (category) {
+          filteredProducts = filteredProducts.filter(p => p.category === category)
+        }
+
+        if (searchQuery) {
+          filteredProducts = filteredProducts.filter(p => 
+            p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            p.description.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+        }
+
+        if (priceRange) {
+          filteredProducts = filteredProducts.filter(p => 
+            p.price >= priceRange[0] && p.price <= priceRange[1]
+          )
+        }
+
+        // Apply sorting to mock data
+        filteredProducts.sort((a, b) => {
+          switch (sortBy) {
+            case 'price_low':
+              return a.price - b.price
+            case 'price_high':
+              return b.price - a.price
+            case 'name':
+              return a.name.localeCompare(b.name)
+            default:
+              return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          }
+        })
+
+        // Apply pagination to mock data
+        const from = (page - 1) * itemsPerPage
+        const to = from + itemsPerPage
+        const paginatedProducts = filteredProducts.slice(from, to)
+
+        if (page === 1) {
+          setProducts(paginatedProducts)
+        } else {
+          setProducts(prev => [...prev, ...paginatedProducts])
+        }
+        setTotalCount(filteredProducts.length)
+        setHasMore(paginatedProducts.length === itemsPerPage)
       } else {
         if (page === 1) {
           setProducts(data || [])
@@ -80,7 +129,51 @@ export function ProductsGrid({
         setHasMore((data?.length || 0) === itemsPerPage)
       }
     } catch (error) {
-      console.error('Error:', error)
+      // Fallback to mock data on error
+      console.log('Error fetching products, using mock data:', error)
+      let filteredProducts = [...mockProducts]
+
+      if (category) {
+        filteredProducts = filteredProducts.filter(p => p.category === category)
+      }
+
+      if (searchQuery) {
+        filteredProducts = filteredProducts.filter(p => 
+          p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.description.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      }
+
+      if (priceRange) {
+        filteredProducts = filteredProducts.filter(p => 
+          p.price >= priceRange[0] && p.price <= priceRange[1]
+        )
+      }
+
+      filteredProducts.sort((a, b) => {
+        switch (sortBy) {
+          case 'price_low':
+            return a.price - b.price
+          case 'price_high':
+            return b.price - a.price
+          case 'name':
+            return a.name.localeCompare(b.name)
+          default:
+            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        }
+      })
+
+      const from = (page - 1) * itemsPerPage
+      const to = from + itemsPerPage
+      const paginatedProducts = filteredProducts.slice(from, to)
+
+      if (page === 1) {
+        setProducts(paginatedProducts)
+      } else {
+        setProducts(prev => [...prev, ...paginatedProducts])
+      }
+      setTotalCount(filteredProducts.length)
+      setHasMore(paginatedProducts.length === itemsPerPage)
     } finally {
       setLoading(false)
     }

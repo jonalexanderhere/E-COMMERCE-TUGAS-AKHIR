@@ -4,16 +4,23 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { User } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
 
+// Mock user for development
+// No mock user - use real authentication
+
 interface AuthContextType {
   user: User | null
   loading: boolean
   signOut: () => Promise<void>
+  signIn: (email: string, password: string) => Promise<any>
+  signUp: (email: string, password: string) => Promise<any>
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
   signOut: async () => {},
+  signIn: async () => ({ data: null, error: null }),
+  signUp: async () => ({ data: null, error: null }),
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -24,6 +31,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
+      setLoading(false)
+    }).catch((error) => {
+      console.log('Supabase auth error:', error)
+      setUser(null)
       setLoading(false)
     })
 
@@ -39,11 +50,58 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const signOut = async () => {
-    await supabase.auth.signOut()
+    try {
+      await supabase.auth.signOut()
+      setUser(null)
+    } catch (error) {
+      console.log('Sign out error:', error)
+      // For development, just clear the user
+      setUser(null)
+    }
+  }
+
+  const signIn = async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      
+      if (error) {
+        console.log('Sign in error:', error)
+        return { data: null, error }
+      }
+      
+      setUser(data.user)
+      return { data, error }
+    } catch (error) {
+      console.log('Sign in error:', error)
+      return { data: null, error: { message: 'An unexpected error occurred' } }
+    }
+  }
+
+  const signUp = async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      })
+      
+      if (error) {
+        console.log('Sign up error:', error)
+        return { data: null, error }
+      }
+      
+      setUser(data.user)
+      return { data, error }
+    } catch (error) {
+      console.log('Sign up error:', error)
+      return { data: null, error: { message: 'An unexpected error occurred' } }
+    }
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signOut, signIn, signUp }}>
       {children}
     </AuthContext.Provider>
   )

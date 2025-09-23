@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/components/providers'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -18,21 +18,19 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
+  const { signIn } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
+      const { data, error } = await signIn(email, password)
 
       if (error) {
         toast({
           title: "Login failed",
-          description: error.message,
+          description: error.message || "Invalid email or password",
           variant: "destructive",
         })
       } else {
@@ -52,6 +50,8 @@ export function LoginForm() {
       setLoading(false)
     }
   }
+
+  // Removed demo login functions
 
   return (
     <Card>
@@ -113,6 +113,7 @@ export function LoginForm() {
             )}
           </Button>
         </form>
+
 
         <div className="mt-6 text-center text-sm">
           <p className="text-muted-foreground">
