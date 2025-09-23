@@ -28,6 +28,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Check if we have real Supabase configuration
+    const hasSupabaseConfig = process.env.NEXT_PUBLIC_SUPABASE_URL && 
+      process.env.NEXT_PUBLIC_SUPABASE_URL !== 'https://your-project-id.supabase.co' &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== 'your-anon-key-here'
+
+    if (!hasSupabaseConfig) {
+      // Development mode without Supabase - set loading to false
+      console.log('Development mode: No Supabase configuration found')
+      setUser(null)
+      setLoading(false)
+      return
+    }
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
@@ -50,17 +64,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const signOut = async () => {
-    try {
-      await supabase.auth.signOut()
-      setUser(null)
-    } catch (error) {
-      console.log('Sign out error:', error)
-      // For development, just clear the user
+    // Check if we have real Supabase configuration
+    const hasSupabaseConfig = process.env.NEXT_PUBLIC_SUPABASE_URL && 
+      process.env.NEXT_PUBLIC_SUPABASE_URL !== 'https://your-project-id.supabase.co' &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== 'your-anon-key-here'
+
+    if (hasSupabaseConfig) {
+      try {
+        await supabase.auth.signOut()
+        setUser(null)
+      } catch (error) {
+        console.log('Sign out error:', error)
+        setUser(null)
+      }
+    } else {
+      // Development mode - just clear the user
       setUser(null)
     }
   }
 
   const signIn = async (email: string, password: string) => {
+    // Check if we have real Supabase configuration
+    const hasSupabaseConfig = process.env.NEXT_PUBLIC_SUPABASE_URL && 
+      process.env.NEXT_PUBLIC_SUPABASE_URL !== 'https://your-project-id.supabase.co' &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== 'your-anon-key-here'
+
+    if (!hasSupabaseConfig) {
+      // Development mode - show error message
+      return { 
+        data: null, 
+        error: { 
+          message: 'Supabase configuration required. Please set up your .env.local file with Supabase credentials.' 
+        } 
+      }
+    }
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -81,6 +121,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signUp = async (email: string, password: string) => {
+    // Check if we have real Supabase configuration
+    const hasSupabaseConfig = process.env.NEXT_PUBLIC_SUPABASE_URL && 
+      process.env.NEXT_PUBLIC_SUPABASE_URL !== 'https://your-project-id.supabase.co' &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== 'your-anon-key-here'
+
+    if (!hasSupabaseConfig) {
+      // Development mode - show error message
+      return { 
+        data: null, 
+        error: { 
+          message: 'Supabase configuration required. Please set up your .env.local file with Supabase credentials.' 
+        } 
+      }
+    }
+
     try {
       const { data, error } = await supabase.auth.signUp({
         email,

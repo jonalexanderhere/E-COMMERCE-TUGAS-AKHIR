@@ -67,8 +67,28 @@ JonsStore is a comprehensive e-commerce platform designed for academic projects 
 ### **Prerequisites**
 - **Node.js**: Version 18 or higher
 - **npm**: Version 8 or higher
-- **Supabase Account**: Free tier available
 - **Git**: For version control
+- **Supabase Account**: Free tier available (optional for development)
+
+### **Option 1: Development Mode (No Supabase Required)**
+Perfect for testing and development without setting up a database:
+
+```bash
+# Clone the repository
+git clone https://github.com/jonalexanderhere/E-COMMERCE-TUGAS-AKHIR.git
+cd E-COMMERCE-TUGAS-AKHIR
+
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+```
+
+> ⚠️ **Note**: In development mode, you can browse products but authentication features require Supabase setup.
+
+### **Option 2: Full Setup with Supabase**
+For complete functionality including authentication and admin features:
 
 ### **1. Clone & Install**
 ```bash

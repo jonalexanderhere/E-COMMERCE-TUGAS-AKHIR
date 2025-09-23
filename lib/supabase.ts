@@ -4,21 +4,34 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-// Validate required environment variables
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
-    'Missing Supabase environment variables. Please check your .env.local file and ensure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set.'
-  )
-}
+// Development fallback values for when environment variables are not set
+const isDevelopment = process.env.NODE_ENV === 'development'
+const hasSupabaseConfig = supabaseUrl && supabaseAnonKey && 
+  supabaseUrl !== 'https://your-project-id.supabase.co' &&
+  supabaseAnonKey !== 'your-anon-key-here'
+
+// Use fallback values in development if no real Supabase config is provided
+const finalSupabaseUrl = hasSupabaseConfig ? supabaseUrl : 'https://placeholder.supabase.co'
+const finalSupabaseAnonKey = hasSupabaseConfig ? supabaseAnonKey : 'placeholder-key'
 
 // Create Supabase client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+export const supabase = createClient(finalSupabaseUrl, finalSupabaseAnonKey, {
   auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true
+    persistSession: hasSupabaseConfig,
+    autoRefreshToken: hasSupabaseConfig,
+    detectSessionInUrl: hasSupabaseConfig
   }
 })
+
+// Log configuration status
+if (isDevelopment && !hasSupabaseConfig) {
+  console.warn('⚠️  Development Mode: Using placeholder Supabase configuration')
+  console.warn('📝 To use real authentication, please:')
+  console.warn('   1. Create a Supabase project at https://supabase.com')
+  console.warn('   2. Get your API keys from Settings > API')
+  console.warn('   3. Create .env.local file with your credentials')
+  console.warn('   4. Restart the development server')
+}
 
 // Database types
 export interface Product {
