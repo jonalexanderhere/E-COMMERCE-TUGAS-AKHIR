@@ -8,6 +8,12 @@ interface OrderPageProps {
   }
 }
 
+// Generate static params for static export
+export async function generateStaticParams() {
+  // Return empty array for static export - pages will be generated on demand
+  return []
+}
+
 export default function OrderPage({ params }: OrderPageProps) {
   return (
     <div className="min-h-screen flex flex-col">
