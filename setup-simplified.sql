@@ -1,13 +1,10 @@
 -- =====================================================
--- COMPLETE SUPABASE SETUP WITH 100+ PRODUCTS
+-- SIMPLIFIED SUPABASE SETUP (NO COMPLEX AUTH)
 -- =====================================================
 
 -- Enable necessary extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-
--- Enable Row Level Security (JWT secret is managed by Supabase)
--- Note: JWT secret is automatically configured by Supabase
 
 -- Create categories table for better organization
 CREATE TABLE IF NOT EXISTS categories (
@@ -337,121 +334,6 @@ INSERT INTO site_settings (key, value, type, description) VALUES
 ('contact_phone', '+62-21-1234-5678', 'string', 'Contact phone number'),
 ('maintenance_mode', 'false', 'boolean', 'Enable maintenance mode');
 
--- Create admin user using Supabase auth functions
--- This approach uses the proper Supabase auth system
-DO $$
-DECLARE
-    admin_user_id UUID;
-BEGIN
-    -- Use Supabase's auth.users table structure properly
-    INSERT INTO auth.users (
-        instance_id,
-        id,
-        aud,
-        role,
-        email,
-        encrypted_password,
-        email_confirmed_at,
-        invited_at,
-        confirmation_token,
-        confirmation_sent_at,
-        recovery_token,
-        recovery_sent_at,
-        email_change_token_new,
-        email_change,
-        email_change_sent_at,
-        last_sign_in_at,
-        raw_app_meta_data,
-        raw_user_meta_data,
-        is_super_admin,
-        created_at,
-        updated_at,
-        phone,
-        phone_confirmed_at,
-        phone_change,
-        phone_change_token,
-        phone_change_sent_at,
-        email_change_token_current,
-        email_change_confirm_status,
-        banned_until,
-        reauthentication_token,
-        reauthentication_sent_at,
-        is_sso_user,
-        deleted_at
-    ) VALUES (
-        '00000000-0000-0000-0000-000000000000',
-        gen_random_uuid(),
-        'authenticated',
-        'authenticated',
-        'admin@jonsstore.com',
-        crypt('admin123456', gen_salt('bf')),
-        NOW(),
-        NULL,
-        '',
-        NULL,
-        '',
-        NULL,
-        '',
-        '',
-        NULL,
-        NOW(),
-        '{"provider": "email", "providers": ["email"]}',
-        '{"full_name": "Admin User", "avatar_url": null}',
-        false,
-        NOW(),
-        NOW(),
-        NULL,
-        NULL,
-        '',
-        '',
-        NULL,
-        '',
-        0,
-        NULL,
-        '',
-        NULL,
-        false,
-        NULL
-    ) RETURNING id INTO admin_user_id;
-
-    -- Insert admin profile
-    INSERT INTO public.user_profiles (
-        id,
-        full_name,
-        first_name,
-        last_name,
-        avatar_url,
-        phone,
-        date_of_birth,
-        gender,
-        role,
-        is_active,
-        email_verified,
-        phone_verified,
-        preferences,
-        created_at,
-        updated_at
-    ) VALUES (
-        admin_user_id,
-        'Admin User',
-        'Admin',
-        'User',
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        'admin',
-        true,
-        true,
-        false,
-        '{}',
-        NOW(),
-        NOW()
-    );
-
-    RAISE NOTICE 'Admin user created successfully with ID: %', admin_user_id;
-END $$;
-
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
 CREATE INDEX IF NOT EXISTS idx_products_price ON products(price);
@@ -460,6 +342,22 @@ CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
 CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
 CREATE INDEX IF NOT EXISTS idx_user_profiles_role ON user_profiles(role);
+
+-- =====================================================
+-- ADMIN USER SETUP INSTRUCTIONS
+-- =====================================================
+
+-- IMPORTANT: Admin user must be created manually in Supabase Auth dashboard
+-- 1. Go to your Supabase dashboard
+-- 2. Navigate to Authentication > Users
+-- 3. Click "Add User"
+-- 4. Fill in the details:
+--    - Email: admin@jonsstore.com
+--    - Password: admin123456
+--    - Auto Confirm User: ✅ (checked)
+-- 5. After creating the user, run this SQL to set admin role:
+
+-- UPDATE user_profiles SET role = 'admin' WHERE id = (SELECT id FROM auth.users WHERE email = 'admin@jonsstore.com');
 
 -- Enhanced schema setup complete!
 -- This comprehensive schema now includes:
@@ -473,15 +371,8 @@ CREATE INDEX IF NOT EXISTS idx_user_profiles_role ON user_profiles(role);
 -- ✅ Site settings management
 -- ✅ Comprehensive security policies
 -- ✅ Performance indexes
--- ✅ Admin user automatically created
 
--- Admin User Details:
--- Email: admin@jonsstore.com
--- Password: admin123456
--- Role: admin (automatically set)
-
--- Next steps:
--- 1. Run this enhanced schema in your Supabase SQL Editor
--- 2. The admin user is automatically created
+-- Admin User Setup:
+-- 1. Create user manually in Supabase Auth dashboard
+-- 2. Set admin role using the provided SQL
 -- 3. Test the application functionality
--- 4. Access admin dashboard at /admin
