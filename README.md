@@ -1,227 +1,303 @@
-<div align="center">
+# 🛍️ Jon's Store - Complete E-commerce Platform
 
-# 🛍️ JonsStore - Professional E-commerce Platform
+A modern, full-featured e-commerce application built with Next.js 14, Supabase, and Tailwind CSS. This platform includes a comprehensive product catalog, user authentication, shopping cart, order management, and admin dashboard.
 
-[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-[![Supabase](https://img.shields.io/badge/Supabase-Database-green?style=for-the-badge&logo=supabase)](https://supabase.com/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
-[![Vercel](https://img.shields.io/badge/Vercel-Deploy-black?style=for-the-badge&logo=vercel)](https://vercel.com/)
+## 🚀 Features
 
-**A production-ready, full-stack e-commerce platform built with modern technologies**
+### 🛒 E-commerce Core
+- **Product Catalog**: 100+ products across 6 categories
+- **Shopping Cart**: Add/remove items, quantity management
+- **Checkout Process**: Complete order flow with address management
+- **Order Management**: Track orders, view history
+- **User Authentication**: Secure login/register system
 
-[🚀 Live Demo](https://jonsstore.vercel.app) • [📖 Documentation](#-documentation) • [🐛 Report Bug](https://github.com/jonalexanderhere/E-COMMERCE-TUGAS-AKHIR/issues) • [✨ Request Feature](https://github.com/jonalexanderhere/E-COMMERCE-TUGAS-AKHIR/issues)
+### 👤 User Management
+- **User Profiles**: Complete profile management
+- **Address Book**: Multiple shipping/billing addresses
+- **Order History**: View past and current orders
+- **Wishlist**: Save favorite products
 
-</div>
+### 🎯 Admin Features
+- **Product Management**: Add, edit, delete products
+- **Category Management**: Organize products by categories
+- **Order Management**: Process and track orders
+- **User Management**: View and manage users
+- **Analytics Dashboard**: Sales and performance metrics
+- **Site Settings**: Configure store settings
 
----
+### 🎨 Modern UI/UX
+- **Responsive Design**: Mobile-first approach
+- **Dark/Light Mode**: Theme switching
+- **Smooth Animations**: Framer Motion integration
+- **Accessibility**: WCAG compliant components
 
-## 🎯 **Project Overview**
+## 📦 Product Categories
 
-JonsStore is a comprehensive e-commerce platform designed for academic projects and real-world applications. Built with industry-standard technologies, it provides a complete shopping experience with advanced features like real-time authentication, secure admin management, and scalable architecture.
+### 🔌 Electronics (30+ products)
+- Smartphones (iPhone, Samsung, Google Pixel)
+- Laptops (MacBook, Dell, Surface)
+- Tablets (iPad, Samsung Galaxy Tab)
+- Audio (Sony, Bose, AirPods)
+- Gaming (PlayStation, Xbox, Nintendo Switch)
+- Smart Home (Amazon Echo, Google Nest)
+- Cameras (Canon, Sony, DJI)
+- TVs (Samsung QLED, LG OLED)
 
-### **🎓 Perfect for Academic Projects**
-- **Final Year Projects**: Complete e-commerce solution
-- **Portfolio Showcase**: Professional-grade application
-- **Learning Platform**: Modern web development practices
-- **Real-world Skills**: Industry-standard technologies
+### 👕 Fashion (25+ products)
+- Sneakers (Nike, Adidas, Converse, Vans)
+- Clothing (Supreme, Nike, Adidas, Zara)
+- Accessories (Watches, Jewelry)
+- Activewear (Under Armour, Lululemon)
 
----
+### 🏠 Home & Living (25+ products)
+- Appliances (Dyson, KitchenAid, Instant Pot)
+- Furniture (IKEA, West Elm)
+- Smart Home (Philips Hue, Ring)
+- Kitchen (Vitamix, Breville)
 
-## ✨ **Key Features**
+### 🏃 Sports & Fitness (20+ products)
+- Equipment (Peloton, Bowflex, TRX)
+- Apparel (Nike, Adidas, Under Armour)
+- Accessories (Garmin, Fitbit)
+- Supplements (Protein, Vitamins)
 
-### 🔐 **Enterprise-Grade Security**
-- **Role-based Access Control**: Secure admin and user roles
-- **Supabase Authentication**: Industry-standard user management
-- **Row Level Security**: Database-level data protection
-- **Session Management**: Secure, persistent user sessions
-- **Admin Guard**: Protected admin routes with permission checks
+### 📚 Books & Media (20+ products)
+- Bestsellers (Atomic Habits, Sapiens)
+- Fiction (The Great Gatsby, The Alchemist)
+- Self-Help (The 7 Habits, Rich Dad Poor Dad)
+- Business (The Lean Startup, Thinking Fast and Slow)
 
-### 🛒 **Complete E-commerce Solution**
-- **100+ Products**: Comprehensive product catalog across 6 categories
-- **Advanced Search**: Real-time search with multiple filters
-- **Shopping Cart**: Persistent cart with state management
-- **Checkout Process**: Complete order flow with validation
-- **Order Management**: Track orders with status updates
-- **User Profiles**: Comprehensive user account management
+### 💄 Beauty & Health (30+ products)
+- Skincare (Olay, Neutrogena, The Ordinary)
+- Makeup (MAC, Urban Decay, Fenty Beauty)
+- Hair Care (Pantene, L'Oreal)
+- Fragrances (Chanel, Tom Ford)
 
-### 👨‍💼 **Professional Admin Dashboard**
-- **Secure Access**: Admin-only features with role verification
-- **Product Management**: Add, edit, and manage products
-- **Order Tracking**: Monitor and update order status
-- **User Management**: View and manage user accounts
-- **Analytics**: Sales and performance statistics
-- **Settings**: Store configuration and preferences
+## 🛠️ Tech Stack
 
-### 🎨 **Modern User Experience**
-- **Responsive Design**: Mobile-first, works on all devices
-- **Professional UI**: Clean, modern interface with Tailwind CSS
-- **Smooth Animations**: Framer Motion powered interactions
-- **Fast Performance**: Optimized for speed and SEO
-- **Accessibility**: WCAG compliant design patterns
+### Frontend
+- **Next.js 14**: React framework with App Router
+- **TypeScript**: Type-safe development
+- **Tailwind CSS**: Utility-first CSS framework
+- **Framer Motion**: Smooth animations
+- **Radix UI**: Accessible component primitives
 
----
+### Backend
+- **Supabase**: Backend-as-a-Service
+- **PostgreSQL**: Relational database
+- **Row Level Security**: Data protection
+- **Real-time**: Live updates
 
-## 🚀 **Quick Start Guide**
+### Authentication
+- **Supabase Auth**: Secure user management
+- **JWT Tokens**: Stateless authentication
+- **Role-based Access**: Admin/User permissions
 
-### **Prerequisites**
-- **Node.js**: Version 18 or higher
-- **npm**: Version 8 or higher
-- **Git**: For version control
-- **Supabase Account**: Free tier available (optional for development)
+## 🚀 Quick Start
 
-### **Option 1: Development Mode (No Supabase Required)**
-Perfect for testing and development without setting up a database:
+### Prerequisites
+- Node.js 18+
+- Supabase account
+- Git
 
-```bash
-# Clone the repository
-git clone https://github.com/jonalexanderhere/E-COMMERCE-TUGAS-AKHIR.git
-cd E-COMMERCE-TUGAS-AKHIR
+### Installation
 
-# Install dependencies
-npm install
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/jons-store.git
+   cd jons-store
+   ```
 
-# Run development server
-npm run dev
-```
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-> ⚠️ **Note**: In development mode, you can browse products but authentication features require Supabase setup.
+3. **Set up environment variables**
+   ```bash
+   cp env.local .env.local
+   # Edit .env.local with your Supabase credentials
+   ```
 
-### **Option 2: Full Setup with Supabase**
-For complete functionality including authentication and admin features:
+4. **Set up Supabase database**
+   - Go to your Supabase dashboard
+   - Navigate to SQL Editor
+   - Run the contents of `setup-complete.sql`
 
-### **1. Clone & Install**
-```bash
-# Clone the repository
-git clone https://github.com/jonalexanderhere/E-COMMERCE-TUGAS-AKHIR.git
-cd E-COMMERCE-TUGAS-AKHIR
+5. **Start the development server**
+   ```bash
+   npm run dev
+   ```
 
-# Install dependencies
-npm install
-```
+6. **Open your browser**
+   ```
+   http://localhost:3000
+   ```
 
-### **2. Supabase Setup**
-1. **Create Project**: Go to [supabase.com](https://supabase.com) and create a new project
-2. **Get Credentials**: Navigate to Settings → API and copy your keys
-3. **Environment Setup**: Create `.env.local` file:
+## 🔧 Configuration
+
+### Environment Variables
+
+Create a `.env.local` file with the following variables:
 
 ```env
 # Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
 # App Configuration
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-### **3. Database Setup**
-1. **Open SQL Editor**: In your Supabase dashboard
-2. **Run Schema**: Copy and paste contents of `supabase-schema.sql`
-3. **Execute**: Click "Run" to create tables and sample data
+### Database Setup
 
-### **4. Admin User Setup**
-1. **Create User**: Go to Authentication → Users in Supabase
-2. **Add Admin**: 
+1. **Run the complete schema**
+   ```sql
+   -- Copy and paste the contents of setup-complete.sql
+   -- into your Supabase SQL Editor and execute
+   ```
+
+2. **Verify admin user creation**
    - Email: `admin@jonsstore.com`
    - Password: `admin123456`
-   - Auto Confirm: ✅ (checked)
-3. **Set Role**: Run this SQL command:
-```sql
-UPDATE user_profiles 
-SET role = 'admin' 
-WHERE id = (SELECT id FROM auth.users WHERE email = 'admin@jonsstore.com');
-```
 
-### **5. Start Development**
-```bash
-npm run dev
-```
+## 📱 Usage
 
-**🎉 Success!** Visit [http://localhost:3000](http://localhost:3000) to see your application.
+### For Customers
+1. **Browse Products**: Explore the product catalog
+2. **Add to Cart**: Click "Add to Cart" on any product
+3. **Checkout**: Proceed to checkout with your items
+4. **Create Account**: Register for order tracking
+5. **Track Orders**: View your order history
+
+### For Admins
+1. **Login**: Use admin credentials
+2. **Dashboard**: Access admin panel at `/admin`
+3. **Manage Products**: Add, edit, or remove products
+4. **Process Orders**: Update order status
+5. **Analytics**: View sales and performance data
+
+## 🎯 Key Features
+
+### 🛒 Shopping Experience
+- **Product Search**: Find products quickly
+- **Category Filtering**: Browse by category
+- **Product Reviews**: Read customer reviews
+- **Wishlist**: Save favorite products
+- **Quick Checkout**: Streamlined purchase process
+
+### 👤 User Experience
+- **Responsive Design**: Works on all devices
+- **Fast Loading**: Optimized performance
+- **Secure Payments**: Safe transaction processing
+- **Order Tracking**: Real-time order updates
+- **Customer Support**: Help and support system
+
+### 🔧 Admin Tools
+- **Product Management**: Full CRUD operations
+- **Inventory Tracking**: Stock management
+- **Order Processing**: Complete order workflow
+- **User Management**: Customer administration
+- **Analytics**: Business intelligence
+
+## 📊 Database Schema
+
+### Core Tables
+- **products**: Product catalog with detailed information
+- **categories**: Product organization
+- **users**: User authentication and profiles
+- **orders**: Order management and tracking
+- **cart_items**: Shopping cart functionality
+
+### Extended Features
+- **coupons**: Discount and promotion system
+- **reviews**: Product reviews and ratings
+- **wishlist**: User wishlist functionality
+- **notifications**: User notification system
+- **site_settings**: Configuration management
+
+## 🔒 Security
+
+### Data Protection
+- **Row Level Security**: Database-level access control
+- **JWT Authentication**: Secure token-based auth
+- **Input Validation**: Prevent SQL injection
+- **HTTPS**: Encrypted data transmission
+
+### User Privacy
+- **GDPR Compliance**: Data protection regulations
+- **Secure Storage**: Encrypted sensitive data
+- **Access Control**: Role-based permissions
+- **Audit Logging**: Track user actions
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+1. **Connect GitHub**: Link your repository
+2. **Configure Environment**: Add environment variables
+3. **Deploy**: Automatic deployment on push
+
+### Other Platforms
+- **Netlify**: Static site hosting
+- **Railway**: Full-stack deployment
+- **DigitalOcean**: VPS deployment
+
+## 📈 Performance
+
+### Optimization
+- **Image Optimization**: Next.js Image component
+- **Code Splitting**: Lazy loading components
+- **Caching**: Supabase query caching
+- **CDN**: Global content delivery
+
+### Monitoring
+- **Analytics**: User behavior tracking
+- **Error Monitoring**: Bug detection
+- **Performance**: Core Web Vitals
+- **Uptime**: Service availability
+
+## 🤝 Contributing
+
+### Development Setup
+1. **Fork the repository**
+2. **Create a feature branch**
+3. **Make your changes**
+4. **Test thoroughly**
+5. **Submit a pull request**
+
+### Code Standards
+- **TypeScript**: Strict type checking
+- **ESLint**: Code quality rules
+- **Prettier**: Code formatting
+- **Testing**: Unit and integration tests
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+### Documentation
+- **API Documentation**: Supabase API reference
+- **Component Library**: UI component docs
+- **Deployment Guide**: Step-by-step setup
+
+### Community
+- **GitHub Issues**: Bug reports and feature requests
+- **Discord**: Community support
+- **Email**: Direct support contact
+
+## 🎉 Acknowledgments
+
+- **Supabase**: Backend infrastructure
+- **Next.js**: React framework
+- **Tailwind CSS**: Styling framework
+- **Radix UI**: Component primitives
+- **Framer Motion**: Animation library
 
 ---
 
-## 🔐 **Admin Access & Security**
+**Built with ❤️ by Jon's Store Team**
 
-### **Default Admin Credentials**
-```
-Email:    admin@jonsstore.com
-Password: admin123456
-```
-
-### **Security Features**
-- ✅ **Role-based Access**: Admin and User roles with proper permissions
-- ✅ **Protected Routes**: Admin dashboard requires authentication
-- ✅ **Session Security**: Secure session management with auto-refresh
-- ✅ **Data Protection**: Row Level Security (RLS) for data isolation
-- ✅ **Input Validation**: Comprehensive form validation and sanitization
-- ✅ **Error Handling**: Secure error messages without information leakage
-
-### **Admin Capabilities**
-- 🛍️ **Product Management**: Add, edit, view, and manage products
-- 📦 **Order Management**: Track orders and update status
-- 👥 **User Management**: View user accounts and manage roles
-- 📊 **Analytics**: View sales statistics and performance metrics
-- ⚙️ **Settings**: Configure store settings and preferences
-- 🔒 **Security**: Monitor user activity and manage access
-
----
-
-## 🚀 **Deployment Options**
-
-### **Vercel (Recommended)**
-```bash
-# 1. Push to GitHub
-git add .
-git commit -m "Ready for deployment"
-git push origin main
-
-# 2. Connect to Vercel
-# - Go to vercel.com
-# - Import your GitHub repository
-# - Add environment variables
-# - Deploy automatically
-```
-
-### **Environment Variables for Production**
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-production-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-production-service-key
-NEXT_PUBLIC_APP_URL=https://your-domain.com
-```
-
----
-
-## 📄 **License & Legal**
-
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
-
-### **Academic Use**
-- ✅ **Educational Projects**: Perfect for academic assignments
-- ✅ **Portfolio**: Showcase your development skills
-- ✅ **Learning**: Study modern web development practices
-- ✅ **Modification**: Customize for your specific needs
-
-### **Commercial Use**
-- ✅ **Business Applications**: Use in commercial projects
-- ✅ **Startup MVPs**: Quick e-commerce solution
-- ✅ **Client Projects**: Professional development work
-- ✅ **Enterprise**: Scalable for large organizations
-
----
-
-<div align="center">
-
-## ⭐ **Star this Repository**
-
-**If you found this project helpful, please give it a star!**
-
----
-
-**Made with ❤️ by [JonsStore Team](https://github.com/jonalexanderhere)**
-
-**🚀 Ready to build something amazing? Start with JonsStore!**
-
-</div>
+*Ready to launch your e-commerce business? Get started today!*

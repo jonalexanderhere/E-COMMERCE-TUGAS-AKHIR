@@ -1,64 +1,173 @@
-# JonsStore E-commerce - GitHub Setup Script (PowerShell)
-Write-Host "🚀 Setting up JonsStore E-commerce on GitHub..." -ForegroundColor Green
+# =====================================================
+# GITHUB SETUP SCRIPT FOR JON'S STORE (PowerShell)
+# =====================================================
 
-# Initialize git repository
-Write-Host "📁 Initializing git repository..." -ForegroundColor Yellow
-git init
+Write-Host "🚀 Setting up GitHub repository for Jon's Store..." -ForegroundColor Green
 
-# Add all files
-Write-Host "📝 Adding files to git..." -ForegroundColor Yellow
+# Check if git is installed
+try {
+    git --version | Out-Null
+    Write-Host "✅ Git is installed" -ForegroundColor Green
+} catch {
+    Write-Host "❌ Git is not installed. Please install Git first." -ForegroundColor Red
+    exit 1
+}
+
+# Initialize git repository if not already initialized
+if (-not (Test-Path ".git")) {
+    Write-Host "📁 Initializing Git repository..." -ForegroundColor Yellow
+    git init
+}
+
+# Add all files to git
+Write-Host "📦 Adding files to Git..." -ForegroundColor Yellow
 git add .
 
 # Create initial commit
 Write-Host "💾 Creating initial commit..." -ForegroundColor Yellow
-git commit -m "Initial commit - JonsStore E-commerce platform
+$commitMessage = @"
+🚀 Initial commit: Complete e-commerce platform with 100+ products
 
 ✨ Features:
-- Modern e-commerce platform with Next.js 14
-- 100+ sample products across 6 categories
-- User authentication with Supabase
-- Shopping cart and checkout process
-- Admin dashboard for store management
-- Responsive design with Tailwind CSS
-- TypeScript for type safety
+- Complete product catalog with 6 categories
+- User authentication and profiles
+- Shopping cart and checkout
+- Admin dashboard
+- Order management
+- Product reviews and ratings
+- Wishlist functionality
+- Coupon system
+- Responsive design
+- Supabase integration
 
-🛠️ Tech Stack:
-- Next.js 14 with App Router
-- TypeScript
-- Tailwind CSS
-- Supabase (Database & Auth)
-- Radix UI Components
-- Zustand State Management
+🛍️ Product Categories:
+- Electronics (30+ products)
+- Fashion (25+ products) 
+- Home & Living (25+ products)
+- Sports & Fitness (20+ products)
+- Books & Media (20+ products)
+- Beauty & Health (30+ products)
+
+🔧 Tech Stack:
+- Next.js 14 with TypeScript
+- Supabase backend
+- Tailwind CSS styling
+- Framer Motion animations
+- Radix UI components
 
 👤 Admin Access:
 - Email: admin@jonsstore.com
 - Password: admin123456
 
-🚀 Ready for deployment to Vercel!"
+🚀 Ready for deployment!
+"@
 
-# Set main branch
-Write-Host "🌿 Setting main branch..." -ForegroundColor Yellow
-git branch -M main
+git commit -m $commitMessage
 
-# Add remote origin
-Write-Host "🔗 Adding remote origin..." -ForegroundColor Yellow
-git remote add origin https://github.com/jonalexanderhere/E-COMMERCE-TUGAS-AKHIR.git
+# Create .gitignore if it doesn't exist
+if (-not (Test-Path ".gitignore")) {
+    Write-Host "📝 Creating .gitignore file..." -ForegroundColor Yellow
+    @"
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Push to GitHub
-Write-Host "⬆️ Pushing to GitHub..." -ForegroundColor Yellow
-git push -u origin main
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-Write-Host "✅ Successfully pushed to GitHub!" -ForegroundColor Green
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# next.js build output
+.next
+
+# nuxt.js build output
+.nuxt
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+"@ | Out-File -FilePath ".gitignore" -Encoding UTF8
+}
+
+Write-Host "✅ Git setup complete!" -ForegroundColor Green
 Write-Host ""
-Write-Host "🎉 Your JonsStore e-commerce platform is now on GitHub!" -ForegroundColor Cyan
+Write-Host "📋 Next steps:" -ForegroundColor Cyan
+Write-Host "1. Create a new repository on GitHub" -ForegroundColor White
+Write-Host "2. Run the following commands:" -ForegroundColor White
+Write-Host "   git remote add origin https://github.com/YOUR_USERNAME/jons-store.git" -ForegroundColor Gray
+Write-Host "   git branch -M main" -ForegroundColor Gray
+Write-Host "   git push -u origin main" -ForegroundColor Gray
 Write-Host ""
-Write-Host "📋 Next Steps:" -ForegroundColor Yellow
-Write-Host "1. Set up Supabase database (see DEPLOYMENT.md)" -ForegroundColor White
-Write-Host "2. Deploy to Vercel (see DEPLOYMENT.md)" -ForegroundColor White
-Write-Host "3. Configure environment variables" -ForegroundColor White
-Write-Host "4. Test your deployment" -ForegroundColor White
-Write-Host ""
-Write-Host "🔗 Repository: https://github.com/jonalexanderhere/E-COMMERCE-TUGAS-AKHIR" -ForegroundColor Blue
-Write-Host "📖 Documentation: See README.md and DEPLOYMENT.md" -ForegroundColor Blue
-Write-Host ""
-Write-Host "Happy coding! 🚀" -ForegroundColor Green
+Write-Host "🎉 Your e-commerce platform is ready for GitHub!" -ForegroundColor Green

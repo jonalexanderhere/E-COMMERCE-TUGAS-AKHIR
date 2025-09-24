@@ -1,15 +1,54 @@
--- Enable Row Level Security
-ALTER DATABASE postgres SET "app.jwt_secret" TO 'your-jwt-secret';
+-- =====================================================
+-- ENHANCED SUPABASE SCHEMA FOR E-COMMERCE APPLICATION
+-- =====================================================
 
--- Create products table
+-- Enable necessary extensions
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+-- Enable Row Level Security (JWT secret is managed by Supabase)
+-- Note: JWT secret is automatically configured by Supabase
+
+-- Create categories table for better organization
+CREATE TABLE IF NOT EXISTS categories (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name VARCHAR(100) NOT NULL UNIQUE,
+  description TEXT,
+  image_url TEXT,
+  parent_id UUID REFERENCES categories(id) ON DELETE SET NULL,
+  sort_order INTEGER DEFAULT 0,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enhanced products table with more fields
 CREATE TABLE IF NOT EXISTS products (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
+  slug VARCHAR(255) UNIQUE,
   description TEXT,
+  short_description VARCHAR(500),
   price DECIMAL(10,2) NOT NULL,
+  compare_price DECIMAL(10,2),
+  cost_price DECIMAL(10,2),
+  sku VARCHAR(100) UNIQUE,
+  barcode VARCHAR(100),
+  weight DECIMAL(8,2),
+  dimensions JSONB, -- {length, width, height}
   image_url TEXT,
-  category VARCHAR(100) NOT NULL,
+  gallery JSONB, -- Array of image URLs
+  category_id UUID REFERENCES categories(id) ON DELETE SET NULL,
+  category VARCHAR(100) NOT NULL, -- Keep for backward compatibility
   stock INTEGER DEFAULT 0,
+  min_stock INTEGER DEFAULT 0,
+  max_stock INTEGER,
+  is_active BOOLEAN DEFAULT true,
+  is_featured BOOLEAN DEFAULT false,
+  is_digital BOOLEAN DEFAULT false,
+  tags TEXT[],
+  meta_title VARCHAR(255),
+  meta_description TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -45,21 +84,126 @@ CREATE TABLE IF NOT EXISTS order_items (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Create user_profiles table
+-- Enhanced user profiles with more fields
 CREATE TABLE IF NOT EXISTS user_profiles (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
   full_name VARCHAR(255),
+  first_name VARCHAR(100),
+  last_name VARCHAR(100),
   avatar_url TEXT,
+  phone VARCHAR(20),
+  date_of_birth DATE,
+  gender VARCHAR(10) CHECK (gender IN ('male', 'female', 'other')),
+  role VARCHAR(20) DEFAULT 'user' CHECK (role IN ('user', 'admin', 'moderator')),
+  is_active BOOLEAN DEFAULT true,
+  email_verified BOOLEAN DEFAULT false,
+  phone_verified BOOLEAN DEFAULT false,
+  preferences JSONB,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Enable Row Level Security
+-- User addresses table
+CREATE TABLE IF NOT EXISTS user_addresses (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  type VARCHAR(20) DEFAULT 'shipping' CHECK (type IN ('shipping', 'billing')),
+  is_default BOOLEAN DEFAULT false,
+  full_name VARCHAR(255) NOT NULL,
+  company VARCHAR(255),
+  address_line_1 VARCHAR(255) NOT NULL,
+  address_line_2 VARCHAR(255),
+  city VARCHAR(100) NOT NULL,
+  state VARCHAR(100),
+  postal_code VARCHAR(20),
+  country VARCHAR(100) NOT NULL,
+  phone VARCHAR(20),
+  instructions TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Coupons and discounts
+CREATE TABLE IF NOT EXISTS coupons (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  code VARCHAR(50) UNIQUE NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  type VARCHAR(20) NOT NULL CHECK (type IN ('percentage', 'fixed')),
+  value DECIMAL(10,2) NOT NULL,
+  minimum_amount DECIMAL(10,2),
+  maximum_discount DECIMAL(10,2),
+  usage_limit INTEGER,
+  used_count INTEGER DEFAULT 0,
+  is_active BOOLEAN DEFAULT true,
+  valid_from TIMESTAMP WITH TIME ZONE,
+  valid_until TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Wishlist table
+CREATE TABLE IF NOT EXISTS wishlist (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  product_id UUID REFERENCES products(id) ON DELETE CASCADE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(user_id, product_id)
+);
+
+-- Product reviews and ratings
+CREATE TABLE IF NOT EXISTS product_reviews (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  product_id UUID REFERENCES products(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  order_id UUID REFERENCES orders(id) ON DELETE SET NULL,
+  rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+  title VARCHAR(255),
+  comment TEXT,
+  is_verified BOOLEAN DEFAULT false,
+  is_approved BOOLEAN DEFAULT true,
+  helpful_count INTEGER DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(user_id, product_id)
+);
+
+-- Notifications table
+CREATE TABLE IF NOT EXISTS notifications (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  type VARCHAR(50) NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  message TEXT NOT NULL,
+  data JSONB,
+  is_read BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Site settings table
+CREATE TABLE IF NOT EXISTS site_settings (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  key VARCHAR(100) UNIQUE NOT NULL,
+  value TEXT,
+  type VARCHAR(20) DEFAULT 'string' CHECK (type IN ('string', 'number', 'boolean', 'json')),
+  description TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enable Row Level Security on all tables
+ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE cart_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_addresses ENABLE ROW LEVEL SECURITY;
+ALTER TABLE coupons ENABLE ROW LEVEL SECURITY;
+ALTER TABLE wishlist ENABLE ROW LEVEL SECURITY;
+ALTER TABLE product_reviews ENABLE ROW LEVEL SECURITY;
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for products (public read access)
 CREATE POLICY "Products are viewable by everyone" ON products
@@ -356,3 +500,394 @@ CREATE INDEX IF NOT EXISTS idx_user_profiles_role ON user_profiles(role);
 -- 
 -- Then update the user profile:
 -- UPDATE user_profiles SET role = 'admin' WHERE id = (SELECT id FROM auth.users WHERE email = 'admin@jonsstore.com');
+
+-- =====================================================
+-- ENHANCED POLICIES FOR NEW TABLES
+-- =====================================================
+
+-- Categories policies
+CREATE POLICY "Categories are viewable by everyone" ON categories
+  FOR SELECT USING (is_active = true);
+
+CREATE POLICY "Admins can manage categories" ON categories
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM user_profiles 
+      WHERE user_profiles.id = auth.uid() 
+      AND user_profiles.role IN ('admin', 'moderator')
+    )
+  );
+
+-- User addresses policies
+CREATE POLICY "Users can manage their own addresses" ON user_addresses
+  FOR ALL USING (auth.uid() = user_id);
+
+-- Coupons policies
+CREATE POLICY "Coupons are viewable by everyone" ON coupons
+  FOR SELECT USING (is_active = true AND (valid_until IS NULL OR valid_until > NOW()));
+
+CREATE POLICY "Admins can manage coupons" ON coupons
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM user_profiles 
+      WHERE user_profiles.id = auth.uid() 
+      AND user_profiles.role IN ('admin', 'moderator')
+    )
+  );
+
+-- Wishlist policies
+CREATE POLICY "Users can manage their own wishlist" ON wishlist
+  FOR ALL USING (auth.uid() = user_id);
+
+-- Product reviews policies
+CREATE POLICY "Reviews are viewable by everyone" ON product_reviews
+  FOR SELECT USING (is_approved = true);
+
+CREATE POLICY "Users can manage their own reviews" ON product_reviews
+  FOR ALL USING (auth.uid() = user_id);
+
+CREATE POLICY "Admins can manage all reviews" ON product_reviews
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM user_profiles 
+      WHERE user_profiles.id = auth.uid() 
+      AND user_profiles.role IN ('admin', 'moderator')
+    )
+  );
+
+-- Notifications policies
+CREATE POLICY "Users can manage their own notifications" ON notifications
+  FOR ALL USING (auth.uid() = user_id);
+
+-- Site settings policies
+CREATE POLICY "Site settings are viewable by everyone" ON site_settings
+  FOR SELECT USING (true);
+
+CREATE POLICY "Admins can manage site settings" ON site_settings
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM user_profiles 
+      WHERE user_profiles.id = auth.uid() 
+      AND user_profiles.role = 'admin'
+    )
+  );
+
+-- =====================================================
+-- ENHANCED FUNCTIONS
+-- =====================================================
+
+-- Function to generate order numbers
+CREATE OR REPLACE FUNCTION generate_order_number()
+RETURNS TEXT AS $$
+DECLARE
+  new_number TEXT;
+  counter INTEGER;
+BEGIN
+  -- Get the next counter value
+  SELECT COALESCE(MAX(CAST(SUBSTRING(order_number FROM 4) AS INTEGER)), 0) + 1
+  INTO counter
+  FROM orders
+  WHERE order_number LIKE 'ORD%';
+  
+  -- Format as ORD000001, ORD000002, etc.
+  new_number := 'ORD' || LPAD(counter::TEXT, 6, '0');
+  
+  RETURN new_number;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function to update product stock
+CREATE OR REPLACE FUNCTION update_product_stock()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF TG_OP = 'INSERT' THEN
+    -- Decrease stock when order item is created
+    UPDATE products 
+    SET stock = stock - NEW.quantity,
+        updated_at = NOW()
+    WHERE id = NEW.product_id;
+    
+    RETURN NEW;
+  ELSIF TG_OP = 'UPDATE' THEN
+    -- Handle quantity changes
+    UPDATE products 
+    SET stock = stock + OLD.quantity - NEW.quantity,
+        updated_at = NOW()
+    WHERE id = NEW.product_id;
+    
+    RETURN NEW;
+  ELSIF TG_OP = 'DELETE' THEN
+    -- Restore stock when order item is deleted
+    UPDATE products 
+    SET stock = stock + OLD.quantity,
+        updated_at = NOW()
+    WHERE id = OLD.product_id;
+    
+    RETURN OLD;
+  END IF;
+  
+  RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger to update stock when order items change
+CREATE TRIGGER update_stock_on_order_items
+  AFTER INSERT OR UPDATE OR DELETE ON order_items
+  FOR EACH ROW EXECUTE FUNCTION update_product_stock();
+
+-- =====================================================
+-- ADDITIONAL INDEXES FOR PERFORMANCE
+-- =====================================================
+
+-- Categories indexes
+CREATE INDEX IF NOT EXISTS idx_categories_parent_id ON categories(parent_id);
+CREATE INDEX IF NOT EXISTS idx_categories_is_active ON categories(is_active);
+CREATE INDEX IF NOT EXISTS idx_categories_sort_order ON categories(sort_order);
+
+-- Enhanced products indexes
+CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id);
+CREATE INDEX IF NOT EXISTS idx_products_slug ON products(slug);
+CREATE INDEX IF NOT EXISTS idx_products_is_active ON products(is_active);
+CREATE INDEX IF NOT EXISTS idx_products_is_featured ON products(is_featured);
+CREATE INDEX IF NOT EXISTS idx_products_created_at ON products(created_at);
+
+-- User profiles indexes
+CREATE INDEX IF NOT EXISTS idx_user_profiles_role ON user_profiles(role);
+CREATE INDEX IF NOT EXISTS idx_user_profiles_is_active ON user_profiles(is_active);
+
+-- User addresses indexes
+CREATE INDEX IF NOT EXISTS idx_user_addresses_user_id ON user_addresses(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_addresses_type ON user_addresses(type);
+
+-- Coupons indexes
+CREATE INDEX IF NOT EXISTS idx_coupons_code ON coupons(code);
+CREATE INDEX IF NOT EXISTS idx_coupons_is_active ON coupons(is_active);
+CREATE INDEX IF NOT EXISTS idx_coupons_valid_until ON coupons(valid_until);
+
+-- Wishlist indexes
+CREATE INDEX IF NOT EXISTS idx_wishlist_user_id ON wishlist(user_id);
+CREATE INDEX IF NOT EXISTS idx_wishlist_product_id ON wishlist(product_id);
+
+-- Reviews indexes
+CREATE INDEX IF NOT EXISTS idx_product_reviews_product_id ON product_reviews(product_id);
+CREATE INDEX IF NOT EXISTS idx_product_reviews_user_id ON product_reviews(user_id);
+CREATE INDEX IF NOT EXISTS idx_product_reviews_rating ON product_reviews(rating);
+CREATE INDEX IF NOT EXISTS idx_product_reviews_is_approved ON product_reviews(is_approved);
+
+-- Notifications indexes
+CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications(user_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_is_read ON notifications(is_read);
+CREATE INDEX IF NOT EXISTS idx_notifications_created_at ON notifications(created_at);
+
+-- Site settings indexes
+CREATE INDEX IF NOT EXISTS idx_site_settings_key ON site_settings(key);
+
+-- =====================================================
+-- SAMPLE DATA FOR NEW TABLES
+-- =====================================================
+
+-- Insert categories
+INSERT INTO categories (name, description, image_url, sort_order) VALUES
+('Electronics', 'Electronic devices and gadgets', 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400&h=400&fit=crop', 1),
+('Fashion', 'Clothing and accessories', 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=400&fit=crop', 2),
+('Home & Living', 'Home improvement and living essentials', 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=400&fit=crop', 3),
+('Sports & Fitness', 'Sports equipment and fitness gear', 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop', 4),
+('Books & Media', 'Books, magazines, and digital media', 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=400&fit=crop', 5),
+('Beauty & Health', 'Beauty products and health supplements', 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 6);
+
+-- Insert sample coupons
+INSERT INTO coupons (code, name, description, type, value, minimum_amount, usage_limit, valid_until) VALUES
+('WELCOME10', 'Welcome Discount', '10% off for new customers', 'percentage', 10.00, 100000, 1000, NOW() + INTERVAL '1 year'),
+('SAVE50K', 'Save 50K', 'Fixed discount of 50,000 IDR', 'fixed', 50000.00, 200000, 500, NOW() + INTERVAL '6 months'),
+('FREESHIP', 'Free Shipping', 'Free shipping on orders over 500K', 'fixed', 25000.00, 500000, 2000, NOW() + INTERVAL '3 months');
+
+-- Insert site settings
+INSERT INTO site_settings (key, value, type, description) VALUES
+('site_name', 'Jon''s Store', 'string', 'Website name'),
+('site_description', 'Premium e-commerce store with quality products', 'string', 'Website description'),
+('currency', 'IDR', 'string', 'Default currency'),
+('tax_rate', '10', 'number', 'Default tax rate percentage'),
+('shipping_rate', '25000', 'number', 'Default shipping cost'),
+('free_shipping_threshold', '500000', 'number', 'Minimum order for free shipping'),
+('contact_email', 'support@jonsstore.com', 'string', 'Contact email address'),
+('contact_phone', '+62-21-1234-5678', 'string', 'Contact phone number'),
+('maintenance_mode', 'false', 'boolean', 'Enable maintenance mode');
+
+-- =====================================================
+-- ADMIN USER CREATION
+-- =====================================================
+
+-- Create admin user directly using service role
+-- This will create the user in auth.users and set up the profile
+DO $$
+DECLARE
+    admin_user_id UUID;
+BEGIN
+    -- Insert admin user into auth.users
+    INSERT INTO auth.users (
+        id,
+        instance_id,
+        aud,
+        role,
+        email,
+        encrypted_password,
+        email_confirmed_at,
+        invited_at,
+        confirmation_token,
+        confirmation_sent_at,
+        recovery_token,
+        recovery_sent_at,
+        email_change_token_new,
+        email_change,
+        email_change_sent_at,
+        last_sign_in_at,
+        raw_app_meta_data,
+        raw_user_meta_data,
+        is_super_admin,
+        created_at,
+        updated_at,
+        phone,
+        phone_confirmed_at,
+        phone_change,
+        phone_change_token,
+        phone_change_sent_at,
+        confirmed_at,
+        email_change_token_current,
+        email_change_confirm_status,
+        banned_until,
+        reauthentication_token,
+        reauthentication_sent_at,
+        is_sso_user,
+        deleted_at
+    ) VALUES (
+        gen_random_uuid(),
+        '00000000-0000-0000-0000-000000000000',
+        'authenticated',
+        'authenticated',
+        'admin@jonsstore.com',
+        crypt('admin123456', gen_salt('bf')),
+        NOW(),
+        NULL,
+        '',
+        NULL,
+        '',
+        NULL,
+        '',
+        '',
+        NULL,
+        NOW(),
+        '{"provider": "email", "providers": ["email"]}',
+        '{"full_name": "Admin User", "avatar_url": null}',
+        false,
+        NOW(),
+        NOW(),
+        NULL,
+        NULL,
+        '',
+        '',
+        NULL,
+        NOW(),
+        '',
+        0,
+        NULL,
+        '',
+        NULL,
+        false,
+        NULL
+    ) RETURNING id INTO admin_user_id;
+
+    -- Insert admin profile
+    INSERT INTO public.user_profiles (
+        id,
+        full_name,
+        first_name,
+        last_name,
+        avatar_url,
+        phone,
+        date_of_birth,
+        gender,
+        role,
+        is_active,
+        email_verified,
+        phone_verified,
+        preferences,
+        created_at,
+        updated_at
+    ) VALUES (
+        admin_user_id,
+        'Admin User',
+        'Admin',
+        'User',
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        'admin',
+        true,
+        true,
+        false,
+        '{}',
+        NOW(),
+        NOW()
+    );
+
+    RAISE NOTICE 'Admin user created successfully with ID: %', admin_user_id;
+END $$;
+
+-- =====================================================
+-- ADDITIONAL SAMPLE DATA
+-- =====================================================
+
+-- Insert more sample products for better testing
+INSERT INTO products (name, description, price, image_url, category, stock, is_featured) VALUES
+-- Featured Electronics
+('iPhone 16 Pro Max', 'Latest iPhone with titanium design and advanced camera system', 19999000, 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=400&fit=crop', 'Electronics', 30, true),
+('MacBook Pro M3', 'Professional laptop with M3 chip and Liquid Retina XDR display', 24999000, 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop', 'Electronics', 15, true),
+('Samsung Galaxy S24 Ultra', 'Premium Android smartphone with S Pen and 200MP camera', 17999000, 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop', 'Electronics', 25, true),
+
+-- Featured Fashion
+('Nike Air Jordan 1', 'Classic basketball sneakers in original colorway', 2999000, 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop', 'Fashion', 50, true),
+('Adidas Yeezy Boost 350', 'Comfortable lifestyle sneakers with Boost technology', 3999000, 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop', 'Fashion', 40, true),
+('Supreme Box Logo Hoodie', 'Limited edition hoodie with iconic box logo', 8999000, 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=400&fit=crop', 'Fashion', 10, true),
+
+-- Featured Home & Living
+('Dyson V15 Detect Absolute', 'Cordless vacuum with laser dust detection and HEPA filtration', 9999000, 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop', 'Home & Living', 12, true),
+('KitchenAid Artisan Stand Mixer', 'Professional stand mixer in signature colors', 4999000, 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=400&fit=crop', 'Home & Living', 8, true),
+('IKEA PAX Wardrobe System', 'Modular wardrobe system with sliding doors', 3999000, 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=400&fit=crop', 'Home & Living', 20, true);
+
+-- Insert more sample orders for testing
+INSERT INTO orders (id, user_id, total_amount, status, shipping_address, created_at) VALUES
+(gen_random_uuid(), (SELECT id FROM auth.users WHERE email = 'admin@jonsstore.com'), 15999000, 'delivered', 'Jl. Sudirman No. 123, Jakarta Pusat, DKI Jakarta 10270', NOW() - INTERVAL '5 days'),
+(gen_random_uuid(), (SELECT id FROM auth.users WHERE email = 'admin@jonsstore.com'), 8999000, 'processing', 'Jl. Thamrin No. 456, Jakarta Pusat, DKI Jakarta 10350', NOW() - INTERVAL '2 days');
+
+-- =====================================================
+-- SCHEMA COMPLETION MESSAGE
+-- =====================================================
+
+-- Enhanced schema setup complete!
+-- This comprehensive schema now includes:
+-- ✅ Enhanced product management with categories and better organization
+-- ✅ Complete user management with profiles and addresses
+-- ✅ Advanced order management with status tracking
+-- ✅ Coupon and discount system
+-- ✅ Wishlist functionality
+-- ✅ Product reviews and ratings
+-- ✅ Notification system
+-- ✅ Site settings management
+-- ✅ Comprehensive security policies
+-- ✅ Performance indexes
+-- ✅ Sample data for testing
+-- ✅ Admin user automatically created
+-- ✅ Featured products for homepage
+-- ✅ Sample orders for testing
+
+-- Admin User Details:
+-- Email: admin@jonsstore.com
+-- Password: admin123456
+-- Role: admin (automatically set)
+
+-- Next steps:
+-- 1. Run this enhanced schema in your Supabase SQL Editor
+-- 2. The admin user is automatically created
+-- 3. Test the application functionality
+-- 4. Access admin dashboard at /admin
