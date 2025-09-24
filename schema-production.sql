@@ -255,10 +255,9 @@ CREATE POLICY "Products are viewable by everyone" ON products
 
 CREATE POLICY "Admins can manage products" ON products
   FOR ALL USING (
-    EXISTS (
-      SELECT 1 FROM user_profiles 
-      WHERE user_profiles.id = auth.uid() 
-      AND user_profiles.role = 'admin'
+    auth.uid() IN (
+      SELECT id FROM user_profiles 
+      WHERE role = 'admin'
     )
   );
 
@@ -284,19 +283,17 @@ CREATE POLICY "Users can insert their own orders" ON orders
 
 CREATE POLICY "Admins can view all orders" ON orders
   FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM user_profiles 
-      WHERE user_profiles.id = auth.uid() 
-      AND user_profiles.role = 'admin'
+    auth.uid() IN (
+      SELECT id FROM user_profiles 
+      WHERE role = 'admin'
     )
   );
 
 CREATE POLICY "Admins can update orders" ON orders
   FOR UPDATE USING (
-    EXISTS (
-      SELECT 1 FROM user_profiles 
-      WHERE user_profiles.id = auth.uid() 
-      AND user_profiles.role = 'admin'
+    auth.uid() IN (
+      SELECT id FROM user_profiles 
+      WHERE role = 'admin'
     )
   );
 
@@ -331,10 +328,9 @@ CREATE POLICY "Users can update their own profile" ON user_profiles
 
 CREATE POLICY "Admins can view all user profiles" ON user_profiles
   FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM user_profiles up
-      WHERE up.id = auth.uid() 
-      AND up.role = 'admin'
+    auth.uid() IN (
+      SELECT id FROM user_profiles 
+      WHERE role = 'admin'
     )
   );
 
@@ -348,10 +344,9 @@ CREATE POLICY "Coupons are viewable by everyone" ON coupons
 
 CREATE POLICY "Admins can manage coupons" ON coupons
   FOR ALL USING (
-    EXISTS (
-      SELECT 1 FROM user_profiles 
-      WHERE user_profiles.id = auth.uid() 
-      AND user_profiles.role IN ('admin', 'moderator')
+    auth.uid() IN (
+      SELECT id FROM user_profiles 
+      WHERE role IN ('admin', 'moderator')
     )
   );
 
@@ -368,10 +363,9 @@ CREATE POLICY "Users can manage their own reviews" ON product_reviews
 
 CREATE POLICY "Admins can manage all reviews" ON product_reviews
   FOR ALL USING (
-    EXISTS (
-      SELECT 1 FROM user_profiles 
-      WHERE user_profiles.id = auth.uid() 
-      AND user_profiles.role IN ('admin', 'moderator')
+    auth.uid() IN (
+      SELECT id FROM user_profiles 
+      WHERE role IN ('admin', 'moderator')
     )
   );
 
@@ -385,10 +379,9 @@ CREATE POLICY "Site settings are viewable by everyone" ON site_settings
 
 CREATE POLICY "Admins can manage site settings" ON site_settings
   FOR ALL USING (
-    EXISTS (
-      SELECT 1 FROM user_profiles 
-      WHERE user_profiles.id = auth.uid() 
-      AND user_profiles.role = 'admin'
+    auth.uid() IN (
+      SELECT id FROM user_profiles 
+      WHERE role = 'admin'
     )
   );
 
@@ -398,10 +391,9 @@ CREATE POLICY "Categories are viewable by everyone" ON categories
 
 CREATE POLICY "Admins can manage categories" ON categories
   FOR ALL USING (
-    EXISTS (
-      SELECT 1 FROM user_profiles 
-      WHERE user_profiles.id = auth.uid() 
-      AND user_profiles.role IN ('admin', 'moderator')
+    auth.uid() IN (
+      SELECT id FROM user_profiles 
+      WHERE role IN ('admin', 'moderator')
     )
   );
 
