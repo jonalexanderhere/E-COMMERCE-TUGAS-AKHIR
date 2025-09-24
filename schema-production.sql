@@ -1,8 +1,8 @@
 -- =====================================================
--- COMPLETE E-COMMERCE SCHEMA - FIXED VERSION
+-- PRODUCTION E-COMMERCE SCHEMA - COMPLETE
 -- =====================================================
--- File ini siap dijalankan di Supabase SQL Editor
--- Semua error INSERT sudah diperbaiki
+-- File ini siap untuk production dengan admin user yang sudah ada
+-- Jalankan di Supabase SQL Editor
 
 -- Enable necessary extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -70,9 +70,13 @@ CREATE TABLE IF NOT EXISTS cart_items (
 CREATE TABLE IF NOT EXISTS orders (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  order_number VARCHAR(50) UNIQUE,
   total_amount DECIMAL(10,2) NOT NULL,
   status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'processing', 'shipped', 'delivered', 'cancelled')),
   shipping_address TEXT NOT NULL,
+  payment_method VARCHAR(50),
+  payment_status VARCHAR(20) DEFAULT 'pending',
+  notes TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -390,6 +394,20 @@ CREATE OR REPLACE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
+-- Function to generate order number
+CREATE OR REPLACE FUNCTION generate_order_number()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.order_number := 'ORD-' || TO_CHAR(NOW(), 'YYYYMMDD') || '-' || LPAD(EXTRACT(EPOCH FROM NOW())::TEXT, 10, '0');
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create trigger for order number generation
+CREATE OR REPLACE TRIGGER generate_order_number_trigger
+  BEFORE INSERT ON orders
+  FOR EACH ROW EXECUTE FUNCTION generate_order_number();
+
 -- =====================================================
 -- INSERT SAMPLE DATA
 -- =====================================================
@@ -401,9 +419,10 @@ INSERT INTO categories (name, description, image_url, sort_order) VALUES
 ('Home & Living', 'Home improvement and living essentials', 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=400&fit=crop', 3),
 ('Sports & Fitness', 'Sports equipment and fitness gear', 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop', 4),
 ('Books & Media', 'Books, magazines, and digital media', 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=400&fit=crop', 5),
-('Beauty & Health', 'Beauty products and health supplements', 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 6);
+('Beauty & Health', 'Beauty products and health supplements', 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop', 6)
+ON CONFLICT (name) DO NOTHING;
 
--- Insert sample products (FIXED - no extra values)
+-- Insert sample products
 INSERT INTO products (name, description, short_description, price, compare_price, cost_price, sku, barcode, weight, dimensions, image_url, gallery, category, stock, min_stock, max_stock, is_active, is_featured, is_digital, tags, meta_title, meta_description) VALUES
 
 -- Electronics
@@ -442,13 +461,15 @@ INSERT INTO products (name, description, short_description, price, compare_price
 -- Beauty & Health
 ('Olay Regenerist Moisturizer', 'Anti-aging daily moisturizer with SPF 30 and niacinamide', 'Anti-aging daily moisturizer with SPF 30', 299000, 399000, 150000, 'ORM', '1234567890601', 0.2, '{"length": 8.0, "width": 5.0, "height": 3.0}', 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&h=600&fit=crop', '["https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&h=600&fit=crop"]', 'Beauty & Health', 120, 12, 240, true, false, false, '{"skincare", "olay", "anti-aging", "spf-30"}', 'Olay Regenerist Moisturizer - Anti-Aging Skincare', 'Anti-aging daily moisturizer with SPF 30 and niacinamide'),
 
-('MAC Lipstick', 'Classic matte lipstick in various shades', 'Classic matte lipstick in various shades', 249000, 299000, 125000, 'ML', '1234567890614', 0.05, '{"length": 8.0, "width": 1.0, "height": 1.0}', 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&h=600&fit=crop', '["https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&h=600&fit=crop"]', 'Beauty & Health', 120, 12, 240, true, false, false, '{"makeup", "mac", "lipstick", "matte"}', 'MAC Lipstick - Classic Matte Shades', 'Classic matte lipstick in various shades');
+('MAC Lipstick', 'Classic matte lipstick in various shades', 'Classic matte lipstick in various shades', 249000, 299000, 125000, 'ML', '1234567890614', 0.05, '{"length": 8.0, "width": 1.0, "height": 1.0}', 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&h=600&fit=crop', '["https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&h=600&fit=crop"]', 'Beauty & Health', 120, 12, 240, true, false, false, '{"makeup", "mac", "lipstick", "matte"}', 'MAC Lipstick - Classic Matte Shades', 'Classic matte lipstick in various shades')
+ON CONFLICT (sku) DO NOTHING;
 
 -- Insert sample coupons
 INSERT INTO coupons (code, name, description, type, value, minimum_amount, usage_limit, valid_until) VALUES
 ('WELCOME10', 'Welcome Discount', '10% off for new customers', 'percentage', 10.00, 100000, 1000, NOW() + INTERVAL '1 year'),
 ('SAVE50K', 'Save 50K', 'Fixed discount of 50,000 IDR', 'fixed', 50000.00, 200000, 500, NOW() + INTERVAL '6 months'),
-('FREESHIP', 'Free Shipping', 'Free shipping on orders over 500K', 'fixed', 25000.00, 500000, 2000, NOW() + INTERVAL '3 months');
+('FREESHIP', 'Free Shipping', 'Free shipping on orders over 500K', 'fixed', 25000.00, 500000, 2000, NOW() + INTERVAL '3 months')
+ON CONFLICT (code) DO NOTHING;
 
 -- Insert site settings
 INSERT INTO site_settings (key, value, type, description) VALUES
@@ -460,7 +481,8 @@ INSERT INTO site_settings (key, value, type, description) VALUES
 ('free_shipping_threshold', '500000', 'number', 'Minimum order for free shipping'),
 ('contact_email', 'support@jonsstore.com', 'string', 'Contact email address'),
 ('contact_phone', '+62-21-1234-5678', 'string', 'Contact phone number'),
-('maintenance_mode', 'false', 'boolean', 'Enable maintenance mode');
+('maintenance_mode', 'false', 'boolean', 'Enable maintenance mode')
+ON CONFLICT (key) DO NOTHING;
 
 -- =====================================================
 -- CREATE INDEXES FOR PERFORMANCE
@@ -485,47 +507,44 @@ CREATE INDEX IF NOT EXISTS idx_site_settings_key ON site_settings(key);
 CREATE INDEX IF NOT EXISTS idx_categories_is_active ON categories(is_active);
 
 -- =====================================================
--- ADMIN USER SETUP INSTRUCTIONS
+-- ADMIN USER SETUP
 -- =====================================================
 
--- IMPORTANT: Admin user must be created manually in Supabase Auth dashboard
--- 1. Go to your Supabase dashboard
--- 2. Navigate to Authentication > Users
--- 3. Click "Add User"
--- 4. Fill in the details:
---    - Email: admin@jonsstore.com
---    - Password: admin123456
---    - Auto Confirm User: ✅ (checked)
--- 5. After creating the user, run this SQL to set admin role:
+-- IMPORTANT: Set admin role for existing user
+-- Replace 'your-email@example.com' with the actual email of the user you want to make admin
+-- This will update the role of an existing user to admin
 
--- UPDATE user_profiles SET role = 'admin' WHERE id = (SELECT id FROM auth.users WHERE email = 'admin@jonsstore.com');
+-- Example: UPDATE user_profiles SET role = 'admin' WHERE id = (SELECT id FROM auth.users WHERE email = 'admin@jonsstore.com');
 
 -- =====================================================
 -- SETUP COMPLETE MESSAGE
 -- =====================================================
 
--- ✅ Enhanced schema setup complete!
--- This comprehensive schema now includes:
--- ✅ Enhanced product management with categories and better organization
--- ✅ Complete user management with profiles and addresses
--- ✅ Advanced order management with status tracking
+-- ✅ Production schema setup complete!
+-- This comprehensive schema includes:
+-- ✅ Complete e-commerce database structure
+-- ✅ 6 product categories with sample data
+-- ✅ 15+ sample products across all categories
+-- ✅ User authentication and profiles
+-- ✅ Shopping cart and checkout system
+-- ✅ Order management with status tracking
 -- ✅ Coupon and discount system
 -- ✅ Wishlist functionality
 -- ✅ Product reviews and ratings
 -- ✅ Notification system
 -- ✅ Site settings management
--- ✅ Comprehensive security policies
+-- ✅ Comprehensive security policies (RLS)
 -- ✅ Performance indexes
 -- ✅ Sample data for testing
 
 -- Admin User Setup:
--- 1. Create user manually in Supabase Auth dashboard
--- 2. Set admin role using the provided SQL
+-- 1. The schema is ready for existing users
+-- 2. To make a user admin, run: UPDATE user_profiles SET role = 'admin' WHERE id = (SELECT id FROM auth.users WHERE email = 'your-email@example.com');
 -- 3. Test the application functionality
+-- 4. Access admin dashboard at /admin
 
 -- Next steps:
 -- 1. Run this schema in your Supabase SQL Editor
--- 2. Create admin user in Supabase Auth dashboard
--- 3. Set admin role using the provided SQL
--- 4. Test the application functionality
--- 5. Access admin dashboard at /admin
+-- 2. Set admin role for existing user using the provided SQL
+-- 3. Test the application functionality
+-- 4. Deploy to production

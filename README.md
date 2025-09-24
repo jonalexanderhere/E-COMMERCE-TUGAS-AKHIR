@@ -1,111 +1,30 @@
-# 🛍️ Jon's Store - Complete E-commerce Platform
+# 🛒 E-Commerce Store
 
-A modern, full-featured e-commerce application built with Next.js 14, Supabase, and Tailwind CSS. This platform includes a comprehensive product catalog, user authentication, shopping cart, order management, and admin dashboard.
+Modern e-commerce application built with Next.js, TypeScript, and Supabase.
 
 ## 🚀 Features
 
-### 🛒 E-commerce Core
-- **Product Catalog**: 100+ products across 6 categories
-- **Shopping Cart**: Add/remove items, quantity management
-- **Checkout Process**: Complete order flow with address management
-- **Order Management**: Track orders, view history
-- **User Authentication**: Secure login/register system
-
-### 👤 User Management
-- **User Profiles**: Complete profile management
-- **Address Book**: Multiple shipping/billing addresses
-- **Order History**: View past and current orders
-- **Wishlist**: Save favorite products
-
-### 🎯 Admin Features
-- **Product Management**: Add, edit, delete products
-- **Category Management**: Organize products by categories
-- **Order Management**: Process and track orders
-- **User Management**: View and manage users
-- **Analytics Dashboard**: Sales and performance metrics
-- **Site Settings**: Configure store settings
-
-### 🎨 Modern UI/UX
-- **Responsive Design**: Mobile-first approach
-- **Dark/Light Mode**: Theme switching
-- **Smooth Animations**: Framer Motion integration
-- **Accessibility**: WCAG compliant components
-
-## 📦 Product Categories
-
-### 🔌 Electronics (30+ products)
-- Smartphones (iPhone, Samsung, Google Pixel)
-- Laptops (MacBook, Dell, Surface)
-- Tablets (iPad, Samsung Galaxy Tab)
-- Audio (Sony, Bose, AirPods)
-- Gaming (PlayStation, Xbox, Nintendo Switch)
-- Smart Home (Amazon Echo, Google Nest)
-- Cameras (Canon, Sony, DJI)
-- TVs (Samsung QLED, LG OLED)
-
-### 👕 Fashion (25+ products)
-- Sneakers (Nike, Adidas, Converse, Vans)
-- Clothing (Supreme, Nike, Adidas, Zara)
-- Accessories (Watches, Jewelry)
-- Activewear (Under Armour, Lululemon)
-
-### 🏠 Home & Living (25+ products)
-- Appliances (Dyson, KitchenAid, Instant Pot)
-- Furniture (IKEA, West Elm)
-- Smart Home (Philips Hue, Ring)
-- Kitchen (Vitamix, Breville)
-
-### 🏃 Sports & Fitness (20+ products)
-- Equipment (Peloton, Bowflex, TRX)
-- Apparel (Nike, Adidas, Under Armour)
-- Accessories (Garmin, Fitbit)
-- Supplements (Protein, Vitamins)
-
-### 📚 Books & Media (20+ products)
-- Bestsellers (Atomic Habits, Sapiens)
-- Fiction (The Great Gatsby, The Alchemist)
-- Self-Help (The 7 Habits, Rich Dad Poor Dad)
-- Business (The Lean Startup, Thinking Fast and Slow)
-
-### 💄 Beauty & Health (30+ products)
-- Skincare (Olay, Neutrogena, The Ordinary)
-- Makeup (MAC, Urban Decay, Fenty Beauty)
-- Hair Care (Pantene, L'Oreal)
-- Fragrances (Chanel, Tom Ford)
+- **User Authentication** - Secure login/register with Supabase Auth
+- **Product Catalog** - Browse products by category with search and filters
+- **Shopping Cart** - Add/remove items with real-time updates
+- **Order Management** - Complete checkout and order tracking
+- **Admin Dashboard** - Manage products, orders, and users
+- **Responsive Design** - Mobile-first design with Tailwind CSS
 
 ## 🛠️ Tech Stack
 
-### Frontend
-- **Next.js 14**: React framework with App Router
-- **TypeScript**: Type-safe development
-- **Tailwind CSS**: Utility-first CSS framework
-- **Framer Motion**: Smooth animations
-- **Radix UI**: Accessible component primitives
+- **Frontend**: Next.js 14, TypeScript, Tailwind CSS
+- **Backend**: Supabase (PostgreSQL, Auth, Storage)
+- **UI Components**: Custom components with Radix UI
+- **State Management**: React hooks and context
+- **Deployment**: Vercel
 
-### Backend
-- **Supabase**: Backend-as-a-Service
-- **PostgreSQL**: Relational database
-- **Row Level Security**: Data protection
-- **Real-time**: Live updates
-
-### Authentication
-- **Supabase Auth**: Secure user management
-- **JWT Tokens**: Stateless authentication
-- **Role-based Access**: Admin/User permissions
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js 18+
-- Supabase account
-- Git
-
-### Installation
+## 📦 Installation
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/jons-store.git
-   cd jons-store
+   git clone https://github.com/jonalexanderhere/E-COMMERCE-TUGAS-AKHIR.git
+   cd E-COMMERCE-TUGAS-AKHIR
    ```
 
 2. **Install dependencies**
@@ -115,189 +34,117 @@ A modern, full-featured e-commerce application built with Next.js 14, Supabase, 
 
 3. **Set up environment variables**
    ```bash
-   cp env.local .env.local
-   # Edit .env.local with your Supabase credentials
+   cp env.example .env.local
+   ```
+   
+   Fill in your Supabase credentials in `.env.local`:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
    ```
 
-4. **Set up Supabase database**
-   - Go to your Supabase dashboard
-   - Navigate to SQL Editor
-   - Run the contents of `setup-complete.sql`
+4. **Set up database**
+   - Go to your Supabase project
+   - Open SQL Editor
+   - Run the `schema-production.sql` file
+   - Set admin role: `UPDATE user_profiles SET role = 'admin' WHERE id = (SELECT id FROM auth.users WHERE email = 'your-email@example.com');`
 
-5. **Start the development server**
+5. **Run the development server**
    ```bash
    npm run dev
    ```
 
-6. **Open your browser**
-   ```
-   http://localhost:3000
-   ```
+## 🗄️ Database Schema
 
-## 🔧 Configuration
+The application uses a comprehensive PostgreSQL schema with:
 
-### Environment Variables
+- **Users & Authentication** - User profiles with role-based access
+- **Products & Categories** - Product catalog with categories
+- **Shopping Cart** - Cart items and wishlist
+- **Orders** - Order management with status tracking
+- **Coupons** - Discount and promotion system
+- **Reviews** - Product reviews and ratings
+- **Notifications** - User notifications system
 
-Create a `.env.local` file with the following variables:
+## 🔐 Admin Setup
 
-```env
-# Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+To set up an admin user:
 
-# App Configuration
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
-
-### Database Setup
-
-1. **Run the complete schema**
+1. Create a user account through the registration page
+2. Run this SQL in Supabase SQL Editor:
    ```sql
-   -- Copy and paste the contents of setup-complete.sql
-   -- into your Supabase SQL Editor and execute
+   UPDATE user_profiles 
+   SET role = 'admin' 
+   WHERE id = (SELECT id FROM auth.users WHERE email = 'your-email@example.com');
    ```
-
-2. **Verify admin user creation**
-   - Email: `admin@jonsstore.com`
-   - Password: `admin123456`
-
-## 📱 Usage
-
-### For Customers
-1. **Browse Products**: Explore the product catalog
-2. **Add to Cart**: Click "Add to Cart" on any product
-3. **Checkout**: Proceed to checkout with your items
-4. **Create Account**: Register for order tracking
-5. **Track Orders**: View your order history
-
-### For Admins
-1. **Login**: Use admin credentials
-2. **Dashboard**: Access admin panel at `/admin`
-3. **Manage Products**: Add, edit, or remove products
-4. **Process Orders**: Update order status
-5. **Analytics**: View sales and performance data
-
-## 🎯 Key Features
-
-### 🛒 Shopping Experience
-- **Product Search**: Find products quickly
-- **Category Filtering**: Browse by category
-- **Product Reviews**: Read customer reviews
-- **Wishlist**: Save favorite products
-- **Quick Checkout**: Streamlined purchase process
-
-### 👤 User Experience
-- **Responsive Design**: Works on all devices
-- **Fast Loading**: Optimized performance
-- **Secure Payments**: Safe transaction processing
-- **Order Tracking**: Real-time order updates
-- **Customer Support**: Help and support system
-
-### 🔧 Admin Tools
-- **Product Management**: Full CRUD operations
-- **Inventory Tracking**: Stock management
-- **Order Processing**: Complete order workflow
-- **User Management**: Customer administration
-- **Analytics**: Business intelligence
-
-## 📊 Database Schema
-
-### Core Tables
-- **products**: Product catalog with detailed information
-- **categories**: Product organization
-- **users**: User authentication and profiles
-- **orders**: Order management and tracking
-- **cart_items**: Shopping cart functionality
-
-### Extended Features
-- **coupons**: Discount and promotion system
-- **reviews**: Product reviews and ratings
-- **wishlist**: User wishlist functionality
-- **notifications**: User notification system
-- **site_settings**: Configuration management
-
-## 🔒 Security
-
-### Data Protection
-- **Row Level Security**: Database-level access control
-- **JWT Authentication**: Secure token-based auth
-- **Input Validation**: Prevent SQL injection
-- **HTTPS**: Encrypted data transmission
-
-### User Privacy
-- **GDPR Compliance**: Data protection regulations
-- **Secure Storage**: Encrypted sensitive data
-- **Access Control**: Role-based permissions
-- **Audit Logging**: Track user actions
+3. Access admin dashboard at `/admin`
 
 ## 🚀 Deployment
 
-### Vercel (Recommended)
-1. **Connect GitHub**: Link your repository
-2. **Configure Environment**: Add environment variables
-3. **Deploy**: Automatic deployment on push
+1. **Deploy to Vercel**
+   ```bash
+   npm run build
+   vercel deploy
+   ```
 
-### Other Platforms
-- **Netlify**: Static site hosting
-- **Railway**: Full-stack deployment
-- **DigitalOcean**: VPS deployment
+2. **Configure environment variables** in Vercel dashboard
 
-## 📈 Performance
+3. **Update Supabase settings** for production domain
 
-### Optimization
-- **Image Optimization**: Next.js Image component
-- **Code Splitting**: Lazy loading components
-- **Caching**: Supabase query caching
-- **CDN**: Global content delivery
+## 📱 Pages
 
-### Monitoring
-- **Analytics**: User behavior tracking
-- **Error Monitoring**: Bug detection
-- **Performance**: Core Web Vitals
-- **Uptime**: Service availability
+- **Home** (`/`) - Featured products and categories
+- **Products** (`/products`) - Product catalog with filters
+- **Categories** (`/categories`) - Browse by category
+- **Cart** (`/cart`) - Shopping cart
+- **Checkout** (`/checkout`) - Order placement
+- **Orders** (`/orders`) - Order history
+- **Profile** (`/profile`) - User profile
+- **Admin** (`/admin`) - Admin dashboard
 
-## 🤝 Contributing
+## 🎨 Components
 
-### Development Setup
-1. **Fork the repository**
-2. **Create a feature branch**
-3. **Make your changes**
-4. **Test thoroughly**
-5. **Submit a pull request**
+- **Database Hooks** - `hooks/use-database.ts` for data fetching
+- **UI Components** - Reusable components in `components/ui/`
+- **Page Components** - Feature-specific components
+- **Admin Components** - Admin dashboard components
 
-### Code Standards
-- **TypeScript**: Strict type checking
-- **ESLint**: Code quality rules
-- **Prettier**: Code formatting
-- **Testing**: Unit and integration tests
+## 📊 Database Hooks
+
+The application uses custom hooks for data management:
+
+- `useCategories()` - Fetch categories
+- `useProducts()` - Fetch products with filters
+- `useFeaturedProducts()` - Fetch featured products
+- `useProduct()` - Fetch single product
+- `useProductsByCategory()` - Fetch products by category
+- `useSearchProducts()` - Search products
+- `useProductsByPriceRange()` - Filter by price range
+
+## 🔧 Development
+
+- **TypeScript** for type safety
+- **ESLint** for code quality
+- **Prettier** for code formatting
+- **Tailwind CSS** for styling
+- **Supabase** for backend services
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
-## 🆘 Support
+## 🤝 Contributing
 
-### Documentation
-- **API Documentation**: Supabase API reference
-- **Component Library**: UI component docs
-- **Deployment Guide**: Step-by-step setup
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
 
-### Community
-- **GitHub Issues**: Bug reports and feature requests
-- **Discord**: Community support
-- **Email**: Direct support contact
+## 📞 Support
 
-## 🎉 Acknowledgments
-
-- **Supabase**: Backend infrastructure
-- **Next.js**: React framework
-- **Tailwind CSS**: Styling framework
-- **Radix UI**: Component primitives
-- **Framer Motion**: Animation library
+For support, email support@jonsstore.com or create an issue on GitHub.
 
 ---
 
-**Built with ❤️ by Jon's Store Team**
-
-*Ready to launch your e-commerce business? Get started today!*
+**Built with ❤️ by Jon Alexander**
