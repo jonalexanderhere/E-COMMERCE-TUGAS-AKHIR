@@ -1,16 +1,14 @@
-'use client'
-
 import { useState, useEffect } from 'react'
 import { supabase, Product } from '@/lib/supabase'
 
-// Types
+// Category interface
 export interface Category {
   id: string
   name: string
-  description: string | null
-  image_url: string | null
-  parent_id: string | null
-  sort_order: number
+  description?: string
+  image_url?: string
+  parent_id?: string | null
+  sort_order?: number
   is_active: boolean
   created_at: string
   updated_at: string
@@ -19,7 +17,7 @@ export interface Category {
 // Re-export Product type from lib/supabase
 export type { Product }
 
-// Fallback categories data
+// Fallback categories data - Always available
 const fallbackCategories: Category[] = [
   {
     id: 'electronics',
@@ -89,6 +87,126 @@ const fallbackCategories: Category[] = [
   }
 ]
 
+// Fallback products data - Always available
+const fallbackProducts: Product[] = [
+  {
+    id: '1',
+    name: 'iPhone 15 Pro',
+    slug: 'iphone-15-pro',
+    description: 'Latest iPhone with advanced camera system and A17 Pro chip',
+    short_description: 'Premium iPhone with titanium build',
+    price: 15999000,
+    compare_price: 17999000,
+    cost_price: 12000000,
+    sku: 'IPH15PRO',
+    barcode: '1234567890001',
+    weight: 0.2,
+    dimensions: { length: 15.0, width: 7.0, height: 0.8 },
+    image_url: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=600&fit=crop',
+    gallery: ['https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=600&fit=crop'],
+    category_id: null,
+    category: 'Electronics',
+    stock: 50,
+    min_stock: 5,
+    max_stock: 100,
+    is_active: true,
+    is_featured: true,
+    is_digital: false,
+    tags: ['smartphone', 'apple', 'premium'],
+    meta_title: 'iPhone 15 Pro - Premium Smartphone',
+    meta_description: 'Latest iPhone with advanced camera system',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: '2',
+    name: 'MacBook Air M2',
+    slug: 'macbook-air-m2',
+    description: 'Ultra-thin laptop with M2 chip and all-day battery life',
+    short_description: 'Ultra-thin laptop with M2 chip',
+    price: 18999000,
+    compare_price: 20999000,
+    cost_price: 14000000,
+    sku: 'MBAIRM2',
+    barcode: '1234567890002',
+    weight: 1.2,
+    dimensions: { length: 30.0, width: 21.0, height: 1.1 },
+    image_url: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&h=600&fit=crop',
+    gallery: ['https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&h=600&fit=crop'],
+    category_id: null,
+    category: 'Electronics',
+    stock: 25,
+    min_stock: 3,
+    max_stock: 50,
+    is_active: true,
+    is_featured: true,
+    is_digital: false,
+    tags: ['laptop', 'apple', 'm2'],
+    meta_title: 'MacBook Air M2 - Ultra-thin Laptop',
+    meta_description: 'Ultra-thin laptop with M2 chip and all-day battery life',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: '3',
+    name: 'Nike Air Max 270',
+    slug: 'nike-air-max-270',
+    description: 'Comfortable running shoes with Max Air cushioning',
+    short_description: 'Premium running shoes',
+    price: 2499000,
+    compare_price: 2799000,
+    cost_price: 1800000,
+    sku: 'NAM270',
+    barcode: '1234567890004',
+    weight: 0.8,
+    dimensions: { length: 32.0, width: 12.0, height: 10.0 },
+    image_url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=600&fit=crop',
+    gallery: ['https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=600&fit=crop'],
+    category_id: null,
+    category: 'Fashion',
+    stock: 40,
+    min_stock: 5,
+    max_stock: 80,
+    is_active: true,
+    is_featured: true,
+    is_digital: false,
+    tags: ['shoes', 'nike', 'running'],
+    meta_title: 'Nike Air Max 270 - Running Shoes',
+    meta_description: 'Comfortable running shoes with Max Air cushioning',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: '4',
+    name: 'IKEA Billy Bookcase',
+    slug: 'ikea-billy-bookcase',
+    description: 'Classic white bookcase with adjustable shelves',
+    short_description: 'Classic white bookcase',
+    price: 1299000,
+    compare_price: 1499000,
+    cost_price: 800000,
+    sku: 'IBB',
+    barcode: '1234567890007',
+    weight: 15.0,
+    dimensions: { length: 80.0, width: 28.0, height: 202.0 },
+    image_url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=600&fit=crop',
+    gallery: ['https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=600&fit=crop'],
+    category_id: null,
+    category: 'Home & Living',
+    stock: 20,
+    min_stock: 2,
+    max_stock: 40,
+    is_active: true,
+    is_featured: true,
+    is_digital: false,
+    tags: ['bookcase', 'ikea', 'furniture'],
+    meta_title: 'IKEA Billy Bookcase - Classic Storage',
+    meta_description: 'Classic white bookcase with adjustable shelves',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  }
+]
+
 // Hook untuk fetch categories
 export function useCategories() {
   const [categories, setCategories] = useState<Category[]>([])
@@ -101,7 +219,6 @@ export function useCategories() {
         setLoading(true)
         setError(null)
         
-        // Use imported supabase client
         const { data, error } = await supabase
           .from('categories')
           .select('*')
@@ -117,7 +234,6 @@ export function useCategories() {
           setCategories(data)
           setError(null)
         } else {
-          // Fallback to default categories if no data
           console.warn('No categories found, using fallback data')
           setCategories(fallbackCategories)
           setError(null)
@@ -125,9 +241,7 @@ export function useCategories() {
       } catch (err) {
         console.error('Error fetching categories:', err)
         setError(err instanceof Error ? err.message : 'Failed to fetch categories')
-        
-        // Always set fallback categories on error
-        setCategories(fallbackCategories)
+        setCategories(fallbackCategories) // Always set fallback on error
       } finally {
         setLoading(false)
       }
@@ -218,137 +332,14 @@ export function useProducts(filters?: {
           setProducts(data)
           setError(null)
         } else {
-          // Fallback to default products if no data
           console.warn('No products found, using fallback data')
-          const fallbackProducts: Product[] = [
-            {
-              id: '1',
-              name: 'iPhone 15 Pro',
-              slug: 'iphone-15-pro',
-              description: 'Latest iPhone with advanced camera system and A17 Pro chip',
-              short_description: 'Premium iPhone with titanium build',
-              price: 15999000,
-              compare_price: 17999000,
-              cost_price: 12000000,
-              sku: 'IPH15PRO',
-              barcode: '1234567890001',
-              weight: 0.2,
-              dimensions: { length: 15.0, width: 7.0, height: 0.8 },
-              image_url: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=600&fit=crop',
-              gallery: ['https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=600&fit=crop'],
-              category_id: null,
-              category: 'Electronics',
-              stock: 50,
-              min_stock: 5,
-              max_stock: 100,
-              is_active: true,
-              is_featured: true,
-              is_digital: false,
-              tags: ['smartphone', 'apple', 'premium'],
-              meta_title: 'iPhone 15 Pro - Premium Smartphone',
-              meta_description: 'Latest iPhone with advanced camera system',
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            },
-            {
-              id: '2',
-              name: 'MacBook Air M2',
-              slug: 'macbook-air-m2',
-              description: 'Ultra-thin laptop with M2 chip and all-day battery life',
-              short_description: 'Ultra-thin laptop with M2 chip',
-              price: 18999000,
-              compare_price: 20999000,
-              cost_price: 14000000,
-              sku: 'MBAIRM2',
-              barcode: '1234567890002',
-              weight: 1.2,
-              dimensions: { length: 30.0, width: 21.0, height: 1.1 },
-              image_url: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&h=600&fit=crop',
-              gallery: ['https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&h=600&fit=crop'],
-              category_id: null,
-              category: 'Electronics',
-              stock: 25,
-              min_stock: 3,
-              max_stock: 50,
-              is_active: true,
-              is_featured: true,
-              is_digital: false,
-              tags: ['laptop', 'apple', 'm2'],
-              meta_title: 'MacBook Air M2 - Ultra-thin Laptop',
-              meta_description: 'Ultra-thin laptop with M2 chip and all-day battery life',
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            }
-          ]
           setProducts(fallbackProducts)
           setError(null)
         }
       } catch (err) {
         console.error('Error fetching products:', err)
         setError(err instanceof Error ? err.message : 'Failed to fetch products')
-        
-        // Set fallback products even on error
-        const fallbackProducts: Product[] = [
-          {
-            id: '1',
-            name: 'iPhone 15 Pro',
-            slug: 'iphone-15-pro',
-            description: 'Latest iPhone with advanced camera system and A17 Pro chip',
-            short_description: 'Premium iPhone with titanium build',
-            price: 15999000,
-            compare_price: 17999000,
-            cost_price: 12000000,
-            sku: 'IPH15PRO',
-            barcode: '1234567890001',
-            weight: 0.2,
-            dimensions: { length: 15.0, width: 7.0, height: 0.8 },
-            image_url: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=600&fit=crop',
-            gallery: ['https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=600&fit=crop'],
-            category_id: null,
-            category: 'Electronics',
-            stock: 50,
-            min_stock: 5,
-            max_stock: 100,
-            is_active: true,
-            is_featured: true,
-            is_digital: false,
-            tags: ['smartphone', 'apple', 'premium'],
-            meta_title: 'iPhone 15 Pro - Premium Smartphone',
-            meta_description: 'Latest iPhone with advanced camera system',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          },
-          {
-            id: '2',
-            name: 'MacBook Air M2',
-            slug: 'macbook-air-m2',
-            description: 'Ultra-thin laptop with M2 chip and all-day battery life',
-            short_description: 'Ultra-thin laptop with M2 chip',
-            price: 18999000,
-            compare_price: 20999000,
-            cost_price: 14000000,
-            sku: 'MBAIRM2',
-            barcode: '1234567890002',
-            weight: 1.2,
-            dimensions: { length: 30.0, width: 21.0, height: 1.1 },
-            image_url: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&h=600&fit=crop',
-            gallery: ['https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&h=600&fit=crop'],
-            category_id: null,
-            category: 'Electronics',
-            stock: 25,
-            min_stock: 3,
-            max_stock: 50,
-            is_active: true,
-            is_featured: true,
-            is_digital: false,
-            tags: ['laptop', 'apple', 'm2'],
-            meta_title: 'MacBook Air M2 - Ultra-thin Laptop',
-            meta_description: 'Ultra-thin laptop with M2 chip and all-day battery life',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          }
-        ]
-        setProducts(fallbackProducts)
+        setProducts(fallbackProducts) // Always set fallback on error
       } finally {
         setLoading(false)
       }
@@ -356,6 +347,54 @@ export function useProducts(filters?: {
 
     fetchProducts()
   }, [filters])
+
+  return { products, loading, error }
+}
+
+// Hook untuk fetch featured products
+export function useFeaturedProducts() {
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchFeaturedProducts() {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('is_active', true)
+          .eq('is_featured', true)
+          .order('created_at', { ascending: false })
+          .limit(8)
+
+        if (error) {
+          console.error('Supabase error:', error)
+          throw error
+        }
+
+        if (data && data.length > 0) {
+          setProducts(data)
+          setError(null)
+        } else {
+          console.warn('No featured products found, using fallback data')
+          setProducts(fallbackProducts.filter(p => p.is_featured))
+          setError(null)
+        }
+      } catch (err) {
+        console.error('Error fetching featured products:', err)
+        setError(err instanceof Error ? err.message : 'Failed to fetch featured products')
+        setProducts(fallbackProducts.filter(p => p.is_featured)) // Always set fallback on error
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchFeaturedProducts()
+  }, [])
 
   return { products, loading, error }
 }
@@ -370,7 +409,7 @@ export function useProduct(id: string) {
     async function fetchProduct() {
       try {
         setLoading(true)
-        // Use imported supabase client
+        setError(null)
         
         const { data, error } = await supabase
           .from('products')
@@ -379,14 +418,25 @@ export function useProduct(id: string) {
           .eq('is_active', true)
           .single()
 
-        if (error) throw error
+        if (error) {
+          console.error('Supabase error:', error)
+          throw error
+        }
 
-        setProduct(data)
-        setError(null)
+        if (data) {
+          setProduct(data)
+          setError(null)
+        } else {
+          console.warn('Product not found, using fallback data')
+          const fallbackProduct = fallbackProducts.find(p => p.id === id)
+          setProduct(fallbackProduct || null)
+          setError(null)
+        }
       } catch (err) {
         console.error('Error fetching product:', err)
         setError(err instanceof Error ? err.message : 'Failed to fetch product')
-        setProduct(null)
+        const fallbackProduct = fallbackProducts.find(p => p.id === id)
+        setProduct(fallbackProduct || null) // Always set fallback on error
       } finally {
         setLoading(false)
       }
@@ -402,20 +452,154 @@ export function useProduct(id: string) {
 
 // Hook untuk fetch products by category
 export function useProductsByCategory(category: string) {
-  return useProducts({ category })
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchProductsByCategory() {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('category', category)
+          .eq('is_active', true)
+          .order('created_at', { ascending: false })
+
+        if (error) {
+          console.error('Supabase error:', error)
+          throw error
+        }
+
+        if (data && data.length > 0) {
+          setProducts(data)
+          setError(null)
+        } else {
+          console.warn('No products found for category, using fallback data')
+          setProducts(fallbackProducts.filter(p => p.category === category))
+          setError(null)
+        }
+      } catch (err) {
+        console.error('Error fetching products by category:', err)
+        setError(err instanceof Error ? err.message : 'Failed to fetch products by category')
+        setProducts(fallbackProducts.filter(p => p.category === category)) // Always set fallback on error
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (category) {
+      fetchProductsByCategory()
+    }
+  }, [category])
+
+  return { products, loading, error }
 }
 
-// Hook untuk fetch featured products
-export function useFeaturedProducts(limit: number = 8) {
-  return useProducts({ featured: true, limit })
+// Hook untuk search products
+export function useSearchProducts(searchTerm: string) {
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function searchProducts() {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('is_active', true)
+          .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
+          .order('created_at', { ascending: false })
+
+        if (error) {
+          console.error('Supabase error:', error)
+          throw error
+        }
+
+        if (data && data.length > 0) {
+          setProducts(data)
+          setError(null)
+        } else {
+          console.warn('No products found for search, using fallback data')
+          setProducts(fallbackProducts.filter(p => 
+            p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            p.description?.toLowerCase().includes(searchTerm.toLowerCase())
+          ))
+          setError(null)
+        }
+      } catch (err) {
+        console.error('Error searching products:', err)
+        setError(err instanceof Error ? err.message : 'Failed to search products')
+        setProducts(fallbackProducts.filter(p => 
+          p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          p.description?.toLowerCase().includes(searchTerm.toLowerCase())
+        )) // Always set fallback on error
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (searchTerm) {
+      searchProducts()
+    }
+  }, [searchTerm])
+
+  return { products, loading, error }
 }
 
-// Hook untuk fetch products with search
-export function useSearchProducts(search: string, limit?: number) {
-  return useProducts({ search, limit })
-}
+// Hook untuk fetch products by price range
+export function useProductsByPriceRange(minPrice: number, maxPrice: number) {
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-// Hook untuk fetch products with price range
-export function useProductsByPriceRange(priceRange: [number, number], limit?: number) {
-  return useProducts({ priceRange, limit })
+  useEffect(() => {
+    async function fetchProductsByPriceRange() {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('is_active', true)
+          .gte('price', minPrice)
+          .lte('price', maxPrice)
+          .order('price', { ascending: true })
+
+        if (error) {
+          console.error('Supabase error:', error)
+          throw error
+        }
+
+        if (data && data.length > 0) {
+          setProducts(data)
+          setError(null)
+        } else {
+          console.warn('No products found for price range, using fallback data')
+          setProducts(fallbackProducts.filter(p => p.price >= minPrice && p.price <= maxPrice))
+          setError(null)
+        }
+      } catch (err) {
+        console.error('Error fetching products by price range:', err)
+        setError(err instanceof Error ? err.message : 'Failed to fetch products by price range')
+        setProducts(fallbackProducts.filter(p => p.price >= minPrice && p.price <= maxPrice)) // Always set fallback on error
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (minPrice >= 0 && maxPrice > 0) {
+      fetchProductsByPriceRange()
+    }
+  }, [minPrice, maxPrice])
+
+  return { products, loading, error }
 }
