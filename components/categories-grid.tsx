@@ -68,7 +68,8 @@ export function CategoriesGrid() {
   if (error) {
     return (
       <div className="text-center py-8">
-        <p className="text-red-500">Error loading categories: {error}</p>
+        <p className="text-red-500 mb-4">Error loading categories: {error}</p>
+        <p className="text-sm text-muted-foreground">Using fallback data to ensure the app works</p>
       </div>
     )
   }

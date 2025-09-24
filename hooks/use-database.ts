@@ -19,6 +19,76 @@ export interface Category {
 // Re-export Product type from lib/supabase
 export type { Product }
 
+// Fallback categories data
+const fallbackCategories: Category[] = [
+  {
+    id: 'electronics',
+    name: 'Electronics',
+    description: 'Electronic devices and gadgets',
+    image_url: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400&h=400&fit=crop',
+    parent_id: null,
+    sort_order: 1,
+    is_active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: 'fashion',
+    name: 'Fashion',
+    description: 'Clothing and accessories',
+    image_url: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=400&fit=crop',
+    parent_id: null,
+    sort_order: 2,
+    is_active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: 'home-living',
+    name: 'Home & Living',
+    description: 'Home improvement and living essentials',
+    image_url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=400&fit=crop',
+    parent_id: null,
+    sort_order: 3,
+    is_active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: 'sports-fitness',
+    name: 'Sports & Fitness',
+    description: 'Sports equipment and fitness gear',
+    image_url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop',
+    parent_id: null,
+    sort_order: 4,
+    is_active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: 'books-media',
+    name: 'Books & Media',
+    description: 'Books, magazines, and digital media',
+    image_url: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=400&fit=crop',
+    parent_id: null,
+    sort_order: 5,
+    is_active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: 'beauty-health',
+    name: 'Beauty & Health',
+    description: 'Beauty products and health supplements',
+    image_url: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop',
+    parent_id: null,
+    sort_order: 6,
+    is_active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  }
+]
+
 // Hook untuk fetch categories
 export function useCategories() {
   const [categories, setCategories] = useState<Category[]>([])
@@ -36,7 +106,7 @@ export function useCategories() {
           .from('categories')
           .select('*')
           .eq('is_active', true)
-          .order('sort_order', { ascending: true })
+          .order('display_order', { ascending: true })
 
         if (error) {
           console.error('Supabase error:', error)
@@ -49,74 +119,6 @@ export function useCategories() {
         } else {
           // Fallback to default categories if no data
           console.warn('No categories found, using fallback data')
-          const fallbackCategories: Category[] = [
-            {
-              id: 'electronics',
-              name: 'Electronics',
-              description: 'Electronic devices and gadgets',
-              image_url: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400&h=400&fit=crop',
-              parent_id: null,
-              sort_order: 1,
-              is_active: true,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            },
-            {
-              id: 'fashion',
-              name: 'Fashion',
-              description: 'Clothing and accessories',
-              image_url: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=400&fit=crop',
-              parent_id: null,
-              sort_order: 2,
-              is_active: true,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            },
-            {
-              id: 'home-living',
-              name: 'Home & Living',
-              description: 'Home improvement and living essentials',
-              image_url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=400&fit=crop',
-              parent_id: null,
-              sort_order: 3,
-              is_active: true,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            },
-            {
-              id: 'sports-fitness',
-              name: 'Sports & Fitness',
-              description: 'Sports equipment and fitness gear',
-              image_url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop',
-              parent_id: null,
-              sort_order: 4,
-              is_active: true,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            },
-            {
-              id: 'books-media',
-              name: 'Books & Media',
-              description: 'Books, magazines, and digital media',
-              image_url: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=400&fit=crop',
-              parent_id: null,
-              sort_order: 5,
-              is_active: true,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            },
-            {
-              id: 'beauty-health',
-              name: 'Beauty & Health',
-              description: 'Beauty products and health supplements',
-              image_url: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop',
-              parent_id: null,
-              sort_order: 6,
-              is_active: true,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            }
-          ]
           setCategories(fallbackCategories)
           setError(null)
         }
@@ -124,75 +126,7 @@ export function useCategories() {
         console.error('Error fetching categories:', err)
         setError(err instanceof Error ? err.message : 'Failed to fetch categories')
         
-        // Set fallback categories even on error
-        const fallbackCategories: Category[] = [
-          {
-            id: 'electronics',
-            name: 'Electronics',
-            description: 'Electronic devices and gadgets',
-            image_url: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400&h=400&fit=crop',
-            parent_id: null,
-            sort_order: 1,
-            is_active: true,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          },
-          {
-            id: 'fashion',
-            name: 'Fashion',
-            description: 'Clothing and accessories',
-            image_url: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=400&fit=crop',
-            parent_id: null,
-            sort_order: 2,
-            is_active: true,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          },
-          {
-            id: 'home-living',
-            name: 'Home & Living',
-            description: 'Home improvement and living essentials',
-            image_url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=400&fit=crop',
-            parent_id: null,
-            sort_order: 3,
-            is_active: true,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          },
-          {
-            id: 'sports-fitness',
-            name: 'Sports & Fitness',
-            description: 'Sports equipment and fitness gear',
-            image_url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop',
-            parent_id: null,
-            sort_order: 4,
-            is_active: true,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          },
-          {
-            id: 'books-media',
-            name: 'Books & Media',
-            description: 'Books, magazines, and digital media',
-            image_url: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=400&fit=crop',
-            parent_id: null,
-            sort_order: 5,
-            is_active: true,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          },
-          {
-            id: 'beauty-health',
-            name: 'Beauty & Health',
-            description: 'Beauty products and health supplements',
-            image_url: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop',
-            parent_id: null,
-            sort_order: 6,
-            is_active: true,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          }
-        ]
+        // Always set fallback categories on error
         setCategories(fallbackCategories)
       } finally {
         setLoading(false)

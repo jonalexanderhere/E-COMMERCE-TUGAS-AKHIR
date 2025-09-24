@@ -30,6 +30,7 @@ async function testConnection() {
     
     if (catError) {
       console.error('❌ Categories error:', catError.message)
+      console.log('🔄 Using fallback categories data')
     } else {
       console.log('✅ Categories loaded:', categories?.length || 0, 'items')
       if (categories && categories.length > 0) {

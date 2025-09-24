@@ -52,8 +52,15 @@ export function CategoriesSection() {
     return (
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
+          <div className="text-center space-y-4 mb-12">
+            <h2 className="text-3xl font-bold">Shop by Category</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Explore our diverse range of categories to find exactly what you're looking for.
+            </p>
+          </div>
           <div className="text-center">
-            <p className="text-red-500">Error loading categories: {error}</p>
+            <p className="text-red-500 mb-4">Error loading categories: {error}</p>
+            <p className="text-sm text-muted-foreground">Using fallback data to ensure the app works</p>
           </div>
         </div>
       </section>
