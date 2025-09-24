@@ -7,10 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:connection": "node test-connection.js",
-    "test:connection:fixed": "node test-connection-fixed.js",
-    "setup:database": "node setup-database.js",
-    "setup:full": "npm run setup:database && npm run dev"
+    "test:connection": "node test-connection.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",

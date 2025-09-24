@@ -21,101 +21,134 @@ async function testConnection() {
   try {
     console.log('\n📊 Testing database connection...')
     
+    let categories = []
+    let products = []
+    let profiles = []
+    let settings = []
+    let coupons = []
+    
     // Test 1: Categories
     console.log('\n1. Testing categories...')
-    const { data: categories, error: catError } = await supabase
-      .from('categories')
-      .select('*')
-      .limit(3)
-    
-    if (catError) {
-      console.error('❌ Categories error:', catError.message)
-      console.log('🔄 Using fallback categories data')
-    } else {
-      console.log('✅ Categories loaded:', categories?.length || 0, 'items')
-      if (categories && categories.length > 0) {
-        console.log('   Sample:', categories[0].name)
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .limit(3)
+      
+      if (error) {
+        console.error('❌ Categories error:', error.message)
+        console.log('🔄 Using fallback categories data')
+      } else {
+        categories = data || []
+        console.log('✅ Categories loaded:', categories.length, 'items')
+        if (categories.length > 0) {
+          console.log('   Sample:', categories[0].name)
+        }
       }
+    } catch (err) {
+      console.error('❌ Categories connection failed:', err.message)
+      console.log('🔄 Using fallback categories data')
     }
     
     // Test 2: Products
     console.log('\n2. Testing products...')
-    const { data: products, error: prodError } = await supabase
-      .from('products')
-      .select('*')
-      .limit(3)
-    
-    if (prodError) {
-      console.error('❌ Products error:', prodError.message)
-    } else {
-      console.log('✅ Products loaded:', products?.length || 0, 'items')
-      if (products && products.length > 0) {
-        console.log('   Sample:', products[0].name)
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .limit(3)
+      
+      if (error) {
+        console.error('❌ Products error:', error.message)
+      } else {
+        products = data || []
+        console.log('✅ Products loaded:', products.length, 'items')
+        if (products.length > 0) {
+          console.log('   Sample:', products[0].name)
+        }
       }
+    } catch (err) {
+      console.error('❌ Products connection failed:', err.message)
     }
     
     // Test 3: User Profiles
     console.log('\n3. Testing user profiles...')
-    const { data: profiles, error: profError } = await supabase
-      .from('user_profiles')
-      .select('*')
-      .limit(3)
-    
-    if (profError) {
-      console.error('❌ User profiles error:', profError.message)
-    } else {
-      console.log('✅ User profiles loaded:', profiles?.length || 0, 'items')
-      if (profiles && profiles.length > 0) {
-        console.log('   Sample:', profiles[0].role)
+    try {
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .limit(3)
+      
+      if (error) {
+        console.error('❌ User profiles error:', error.message)
+      } else {
+        profiles = data || []
+        console.log('✅ User profiles loaded:', profiles.length, 'items')
+        if (profiles.length > 0) {
+          console.log('   Sample:', profiles[0].role)
+        }
       }
+    } catch (err) {
+      console.error('❌ User profiles connection failed:', err.message)
     }
     
     // Test 4: Site Settings
     console.log('\n4. Testing site settings...')
-    const { data: settings, error: setError } = await supabase
-      .from('site_settings')
-      .select('*')
-      .limit(3)
-    
-    if (setError) {
-      console.error('❌ Site settings error:', setError.message)
-    } else {
-      console.log('✅ Site settings loaded:', settings?.length || 0, 'items')
-      if (settings && settings.length > 0) {
-        console.log('   Sample:', settings[0].key, '=', settings[0].value)
+    try {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('*')
+        .limit(3)
+      
+      if (error) {
+        console.error('❌ Site settings error:', error.message)
+      } else {
+        settings = data || []
+        console.log('✅ Site settings loaded:', settings.length, 'items')
+        if (settings.length > 0) {
+          console.log('   Sample:', settings[0].key, '=', settings[0].value)
+        }
       }
+    } catch (err) {
+      console.error('❌ Site settings connection failed:', err.message)
     }
     
     // Test 5: Coupons
     console.log('\n5. Testing coupons...')
-    const { data: coupons, error: coupError } = await supabase
-      .from('coupons')
-      .select('*')
-      .limit(3)
-    
-    if (coupError) {
-      console.error('❌ Coupons error:', coupError.message)
-    } else {
-      console.log('✅ Coupons loaded:', coupons?.length || 0, 'items')
-      if (coupons && coupons.length > 0) {
-        console.log('   Sample:', coupons[0].code)
+    try {
+      const { data, error } = await supabase
+        .from('coupons')
+        .select('*')
+        .limit(3)
+      
+      if (error) {
+        console.error('❌ Coupons error:', error.message)
+      } else {
+        coupons = data || []
+        console.log('✅ Coupons loaded:', coupons.length, 'items')
+        if (coupons.length > 0) {
+          console.log('   Sample:', coupons[0].code)
+        }
       }
+    } catch (err) {
+      console.error('❌ Coupons connection failed:', err.message)
     }
     
     console.log('\n🎉 Database connection test completed!')
     console.log('\n📋 Summary:')
-    console.log(`   Categories: ${categories?.length || 0}`)
-    console.log(`   Products: ${products?.length || 0}`)
-    console.log(`   User Profiles: ${profiles?.length || 0}`)
-    console.log(`   Site Settings: ${settings?.length || 0}`)
-    console.log(`   Coupons: ${coupons?.length || 0}`)
+    console.log(`   Categories: ${categories.length}`)
+    console.log(`   Products: ${products.length}`)
+    console.log(`   User Profiles: ${profiles.length}`)
+    console.log(`   Site Settings: ${settings.length}`)
+    console.log(`   Coupons: ${coupons.length}`)
     
-    if (categories && categories.length > 0 && products && products.length > 0) {
+    if (categories.length > 0 && products.length > 0) {
       console.log('\n✅ Database setup is complete and working!')
       console.log('🚀 You can now run: npm run dev')
     } else {
       console.log('\n⚠️  Database setup incomplete.')
-      console.log('📝 Please run the schema-production.sql in Supabase SQL Editor')
+      console.log('📝 Please run the schema-clean.sql in Supabase SQL Editor')
+      console.log('🔧 This will fix all database issues and provide sample data')
     }
     
   } catch (error) {
@@ -123,8 +156,9 @@ async function testConnection() {
     console.log('\n🔧 Troubleshooting:')
     console.log('1. Check your .env.local file')
     console.log('2. Verify Supabase project is active')
-    console.log('3. Run schema-production.sql in Supabase SQL Editor')
+    console.log('3. Run schema-clean.sql in Supabase SQL Editor')
     console.log('4. Check Supabase dashboard for errors')
+    console.log('5. Ensure RLS is disabled for testing')
   }
 }
 

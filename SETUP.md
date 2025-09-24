@@ -1,38 +1,43 @@
-# 🚀 Final Setup Guide - Complete Fix
+# 🚀 E-Commerce Store - Complete Setup Guide
 
-## 🚨 Problem Analysis
+## 📋 Prerequisites
 
-Based on the error logs, there's a **500 error with SQL state code 42P17** which indicates a database query issue. This is likely due to:
+### 1. **Supabase Project**
+- ✅ Create project at [supabase.com](https://supabase.com)
+- ✅ Get API keys from Settings > API
+- ✅ Enable Row Level Security (RLS)
 
-1. **RLS Policy Conflicts** - Infinite recursion in policies
-2. **Database Schema Issues** - Missing or incorrect table structure
-3. **Query Problems** - Supabase PostgREST query failures
+### 2. **Environment Variables**
+Create `.env.local` file:
 
-## ✅ Complete Solution
+```env
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
+```
 
-### **Step 1: Run Fixed Schema**
+## 🗄️ Database Setup
 
+### **Step 1: Run Clean Schema**
 1. **Open Supabase Dashboard**
 2. **Go to SQL Editor**
-3. **Copy `schema-fixed-final.sql` content**
+3. **Copy `schema-clean.sql` content**
 4. **Paste and Run**
 
 This schema:
+- ✅ Drops all existing functions and policies safely
+- ✅ Creates all tables with proper structure
 - ✅ Disables RLS temporarily for testing
-- ✅ Creates all tables safely
-- ✅ Includes sample data
+- ✅ Includes sample data (6 categories, 14 products, 3 coupons)
 - ✅ Sets up admin user
-- ✅ Fixes all query issues
 
 ### **Step 2: Test Connection**
-
 ```bash
-# Test with improved connection script
-npm run test:connection:fixed
+npm run test:connection
 ```
 
 ### **Step 3: Start Development**
-
 ```bash
 npm run dev
 ```
@@ -82,11 +87,11 @@ npm run dev
 - SAVE50K (50K off, min 500K)
 - FREESHIP (Free shipping)
 
-## 🚀 Quick Fix Steps
+## 🚀 Quick Setup Steps
 
 ### **1. Database Setup:**
 ```bash
-# 1. Copy schema-fixed-final.sql content
+# 1. Copy schema-clean.sql content
 # 2. Paste into Supabase SQL Editor
 # 3. Click "Run"
 # 4. Verify all tables created
@@ -94,7 +99,7 @@ npm run dev
 
 ### **2. Test Connection:**
 ```bash
-npm run test:connection:fixed
+npm run test:connection
 ```
 
 ### **3. Start Development:**
@@ -106,29 +111,52 @@ npm run dev
 - Go to `http://localhost:3000/admin`
 - Login with: `admin@jonsstore.com` / `admin123456`
 
-## 🔧 Error Resolution
+## 🔧 Features
 
-### **Error 500 (42P17) - Fixed:**
-- ✅ Disabled RLS temporarily
-- ✅ Fixed query issues
-- ✅ Safe table creation
-- ✅ Proper data insertion
+### **Customer Features:**
+- ✅ Product browsing with database
+- ✅ Category filtering
+- ✅ Search functionality
+- ✅ Shopping cart
+- ✅ User accounts
+- ✅ Order tracking
+- ✅ Wishlist
+- ✅ Product reviews
 
-### **"Failed to fetch categories" - Fixed:**
-- ✅ Robust fallback data
-- ✅ Better error handling
-- ✅ Database integration working
-- ✅ No more errors
+### **Admin Features:**
+- ✅ Dashboard analytics
+- ✅ Product management
+- ✅ Order management
+- ✅ User management
+- ✅ Category management
+- ✅ Coupon management
+- ✅ Site settings
 
-### **Admin Access - Fixed:**
-- ✅ Admin user configured
-- ✅ Proper role assignment
-- ✅ Dashboard access
-- ✅ All features working
+## 🚀 Production Deployment
+
+### **1. Vercel Deployment**
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy to Vercel
+vercel
+
+# Set environment variables in Vercel dashboard
+```
+
+### **2. Environment Variables in Production**
+Set these in Vercel dashboard:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
+```
 
 ## 🎯 Expected Results
 
-After running the fixed schema:
+After setup, you should see:
 
 ### ✅ **Homepage:**
 - Categories display correctly
@@ -148,48 +176,9 @@ After running the fixed schema:
 - All features work
 - Data displays correctly
 
-### ✅ **Database:**
-- All tables created
-- Sample data inserted
-- Admin user configured
-- RLS disabled for testing
-
-## 🚀 Production Ready Features
-
-### **✅ Customer Features:**
-- Product browsing with database
-- Category filtering
-- Search functionality
-- Shopping cart
-- User accounts
-- Order tracking
-- Wishlist
-- Product reviews
-
-### **✅ Admin Features:**
-- Dashboard analytics
-- Product management
-- Order management
-- User management
-- Category management
-- Coupon management
-- Site settings
-
-### **✅ Security Features:**
-- Secure authentication
-- Role-based access
-- Data protection
-- Input validation
-
-### **✅ Mobile Responsive:**
-- Mobile-friendly interface
-- Touch-optimized controls
-- Responsive design
-- Works on all devices
-
 ## 🔧 Troubleshooting
 
-### **If you still get errors:**
+### **If you get errors:**
 
 1. **Check Supabase Logs:**
    - Go to Supabase Dashboard
@@ -197,13 +186,13 @@ After running the fixed schema:
    - Look for any remaining errors
 
 2. **Verify Schema:**
-   - Ensure `schema-fixed-final.sql` ran successfully
+   - Ensure `schema-clean.sql` ran successfully
    - Check all tables exist
    - Verify sample data inserted
 
 3. **Test Connection:**
    ```bash
-   npm run test:connection:fixed
+   npm run test:connection
    ```
 
 4. **Check Environment:**
