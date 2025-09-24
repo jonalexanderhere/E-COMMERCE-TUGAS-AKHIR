@@ -1,4 +1,5 @@
 // Mock data for development when Supabase is not available
+// This file is deprecated - use database hooks instead
 export const mockProducts = [
   // Electronics
   {

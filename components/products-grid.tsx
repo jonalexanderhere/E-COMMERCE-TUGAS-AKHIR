@@ -1,9 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Product } from '@/lib/supabase'
-import { supabase } from '@/lib/supabase'
-import { mockProducts } from '@/lib/mock-data'
+import { useProducts } from '@/hooks/use-database'
 import { ProductCard } from '@/components/product-card'
 import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'

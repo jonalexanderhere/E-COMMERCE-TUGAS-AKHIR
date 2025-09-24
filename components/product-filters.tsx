@@ -8,9 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Slider } from '@/components/ui/slider'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Search, Filter, X } from 'lucide-react'
-import { mockCategories } from '@/lib/mock-data'
-
-const categories = mockCategories
+import { useCategories } from '@/hooks/use-database'
 
 const sortOptions = [
   { value: 'created_at', label: 'Newest First' },
@@ -29,6 +27,7 @@ interface ProductFiltersProps {
 }
 
 export function ProductFilters({ onFiltersChange }: ProductFiltersProps) {
+  const { categories, loading: categoriesLoading } = useCategories()
   const [search, setSearch] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000000])
@@ -113,17 +112,25 @@ export function ProductFilters({ onFiltersChange }: ProductFiltersProps) {
             >
               All Categories
             </Button>
-            {categories.map((category) => (
-              <Button
-                key={category}
-                variant={selectedCategory === category ? 'default' : 'ghost'}
-                size="sm"
-                className="w-full justify-start"
-                onClick={() => setSelectedCategory(category)}
-              >
-                {category}
-              </Button>
-            ))}
+            {categoriesLoading ? (
+              <div className="space-y-2">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="h-8 bg-gray-200 rounded animate-pulse" />
+                ))}
+              </div>
+            ) : (
+              categories.map((category) => (
+                <Button
+                  key={category.id}
+                  variant={selectedCategory === category.name ? 'default' : 'ghost'}
+                  size="sm"
+                  className="w-full justify-start"
+                  onClick={() => setSelectedCategory(category.name)}
+                >
+                  {category.name}
+                </Button>
+              ))
+            )}
           </div>
         </CardContent>
       </Card>
