@@ -219,6 +219,36 @@ ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
 -- CREATE SECURITY POLICIES
 -- =====================================================
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Products are viewable by everyone" ON products;
+DROP POLICY IF EXISTS "Admins can manage products" ON products;
+DROP POLICY IF EXISTS "Users can view their own cart items" ON cart_items;
+DROP POLICY IF EXISTS "Users can insert their own cart items" ON cart_items;
+DROP POLICY IF EXISTS "Users can update their own cart items" ON cart_items;
+DROP POLICY IF EXISTS "Users can delete their own cart items" ON cart_items;
+DROP POLICY IF EXISTS "Users can view their own orders" ON orders;
+DROP POLICY IF EXISTS "Users can insert their own orders" ON orders;
+DROP POLICY IF EXISTS "Admins can view all orders" ON orders;
+DROP POLICY IF EXISTS "Admins can update orders" ON orders;
+DROP POLICY IF EXISTS "Users can view their own order items" ON order_items;
+DROP POLICY IF EXISTS "Users can insert their own order items" ON order_items;
+DROP POLICY IF EXISTS "Users can view their own profile" ON user_profiles;
+DROP POLICY IF EXISTS "Users can insert their own profile" ON user_profiles;
+DROP POLICY IF EXISTS "Users can update their own profile" ON user_profiles;
+DROP POLICY IF EXISTS "Admins can view all user profiles" ON user_profiles;
+DROP POLICY IF EXISTS "Users can manage their own addresses" ON user_addresses;
+DROP POLICY IF EXISTS "Coupons are viewable by everyone" ON coupons;
+DROP POLICY IF EXISTS "Admins can manage coupons" ON coupons;
+DROP POLICY IF EXISTS "Users can manage their own wishlist" ON wishlist;
+DROP POLICY IF EXISTS "Reviews are viewable by everyone" ON product_reviews;
+DROP POLICY IF EXISTS "Users can manage their own reviews" ON product_reviews;
+DROP POLICY IF EXISTS "Admins can manage all reviews" ON product_reviews;
+DROP POLICY IF EXISTS "Users can manage their own notifications" ON notifications;
+DROP POLICY IF EXISTS "Site settings are viewable by everyone" ON site_settings;
+DROP POLICY IF EXISTS "Admins can manage site settings" ON site_settings;
+DROP POLICY IF EXISTS "Categories are viewable by everyone" ON categories;
+DROP POLICY IF EXISTS "Admins can manage categories" ON categories;
+
 -- Products policies
 CREATE POLICY "Products are viewable by everyone" ON products
   FOR SELECT USING (true);
