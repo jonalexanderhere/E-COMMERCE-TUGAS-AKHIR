@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase'
+import { supabase, Product } from '@/lib/supabase'
 
 // Types
 export interface Category {
@@ -16,35 +16,8 @@ export interface Category {
   updated_at: string
 }
 
-export interface Product {
-  id: string
-  name: string
-  slug: string | null
-  description: string | null
-  short_description: string | null
-  price: number
-  compare_price: number | null
-  cost_price: number | null
-  sku: string | null
-  barcode: string | null
-  weight: number | null
-  dimensions: any
-  image_url: string | null
-  gallery: any
-  category_id: string | null
-  category: string
-  stock: number
-  min_stock: number
-  max_stock: number | null
-  is_active: boolean
-  is_featured: boolean
-  is_digital: boolean
-  tags: string[] | null
-  meta_title: string | null
-  meta_description: string | null
-  created_at: string
-  updated_at: string
-}
+// Re-export Product type from lib/supabase
+export type { Product }
 
 // Hook untuk fetch categories
 export function useCategories() {
@@ -56,7 +29,7 @@ export function useCategories() {
     async function fetchCategories() {
       try {
         setLoading(true)
-        const supabase = createClient()
+        // Use imported supabase client
         
         const { data, error } = await supabase
           .from('categories')
@@ -100,7 +73,7 @@ export function useProducts(filters?: {
     async function fetchProducts() {
       try {
         setLoading(true)
-        const supabase = createClient()
+        // Use imported supabase client
         
         let query = supabase
           .from('products')
@@ -181,7 +154,7 @@ export function useProduct(id: string) {
     async function fetchProduct() {
       try {
         setLoading(true)
-        const supabase = createClient()
+        // Use imported supabase client
         
         const { data, error } = await supabase
           .from('products')

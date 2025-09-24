@@ -41,11 +41,29 @@ if (process.env.NODE_ENV === 'development' && !hasSupabaseConfig) {
 export interface Product {
   id: string
   name: string
-  description: string
+  slug: string | null
+  description: string | null
+  short_description: string | null
   price: number
-  image_url: string
+  compare_price: number | null
+  cost_price: number | null
+  sku: string | null
+  barcode: string | null
+  weight: number | null
+  dimensions: any
+  image_url: string | null
+  gallery: any
+  category_id: string | null
   category: string
   stock: number
+  min_stock: number
+  max_stock: number | null
+  is_active: boolean
+  is_featured: boolean
+  is_digital: boolean
+  tags: string[] | null
+  meta_title: string | null
+  meta_description: string | null
   created_at: string
   updated_at: string
 }

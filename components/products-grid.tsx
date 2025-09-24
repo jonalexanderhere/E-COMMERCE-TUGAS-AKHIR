@@ -1,7 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useProducts } from '@/hooks/use-database'
+import { useProducts, Product } from '@/hooks/use-database'
 import { ProductCard } from '@/components/product-card'
 import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'
@@ -19,222 +18,51 @@ export function ProductsGrid({
   priceRange, 
   sortBy = 'created_at' 
 }: ProductsGridProps) {
-  const [products, setProducts] = useState<Product[]>([])
-  const [loading, setLoading] = useState(true)
-  const [page, setPage] = useState(1)
-  const [hasMore, setHasMore] = useState(true)
-  const [totalCount, setTotalCount] = useState(0)
+  const { products, loading, error } = useProducts({
+    category,
+    search: searchQuery,
+    priceRange,
+    sortBy
+  })
 
-  const itemsPerPage = 12
-
-  useEffect(() => {
-    fetchProducts()
-  }, [category, searchQuery, priceRange, sortBy, page])
-
-  const fetchProducts = async () => {
-    setLoading(true)
-    
-    try {
-      // Try to fetch from Supabase first
-      let query = supabase
-        .from('products')
-        .select('*', { count: 'exact' })
-
-      // Apply filters
-      if (category) {
-        query = query.eq('category', category)
-      }
-
-      if (searchQuery) {
-        query = query.or(`name.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`)
-      }
-
-      if (priceRange) {
-        query = query.gte('price', priceRange[0]).lte('price', priceRange[1])
-      }
-
-      // Apply sorting
-      const sortField = sortBy === 'price_low' ? 'price' : 
-                       sortBy === 'price_high' ? 'price' : 
-                       sortBy === 'name' ? 'name' : 'created_at'
-      
-      const ascending = sortBy === 'price_low' || sortBy === 'name'
-      query = query.order(sortField, { ascending })
-
-      // Apply pagination
-      const from = (page - 1) * itemsPerPage
-      const to = from + itemsPerPage - 1
-      query = query.range(from, to)
-
-      const { data, error, count } = await query
-
-      if (error || !data || data.length === 0) {
-        // Fallback to mock data
-        console.log('Using mock data for products grid')
-        let filteredProducts = [...mockProducts]
-
-        // Apply filters to mock data
-        if (category) {
-          filteredProducts = filteredProducts.filter(p => p.category === category)
-        }
-
-        if (searchQuery) {
-          filteredProducts = filteredProducts.filter(p => 
-            p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            p.description.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-        }
-
-        if (priceRange) {
-          filteredProducts = filteredProducts.filter(p => 
-            p.price >= priceRange[0] && p.price <= priceRange[1]
-          )
-        }
-
-        // Apply sorting to mock data
-        filteredProducts.sort((a, b) => {
-          switch (sortBy) {
-            case 'price_low':
-              return a.price - b.price
-            case 'price_high':
-              return b.price - a.price
-            case 'name':
-              return a.name.localeCompare(b.name)
-            default:
-              return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-          }
-        })
-
-        // Apply pagination to mock data
-        const from = (page - 1) * itemsPerPage
-        const to = from + itemsPerPage
-        const paginatedProducts = filteredProducts.slice(from, to)
-
-        if (page === 1) {
-          setProducts(paginatedProducts)
-        } else {
-          setProducts(prev => [...prev, ...paginatedProducts])
-        }
-        setTotalCount(filteredProducts.length)
-        setHasMore(paginatedProducts.length === itemsPerPage)
-      } else {
-        if (page === 1) {
-          setProducts(data || [])
-        } else {
-          setProducts(prev => [...prev, ...(data || [])])
-        }
-        setTotalCount(count || 0)
-        setHasMore((data?.length || 0) === itemsPerPage)
-      }
-    } catch (error) {
-      // Fallback to mock data on error
-      console.log('Error fetching products, using mock data:', error)
-      let filteredProducts = [...mockProducts]
-
-      if (category) {
-        filteredProducts = filteredProducts.filter(p => p.category === category)
-      }
-
-      if (searchQuery) {
-        filteredProducts = filteredProducts.filter(p => 
-          p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.description.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-      }
-
-      if (priceRange) {
-        filteredProducts = filteredProducts.filter(p => 
-          p.price >= priceRange[0] && p.price <= priceRange[1]
-        )
-      }
-
-      filteredProducts.sort((a, b) => {
-        switch (sortBy) {
-          case 'price_low':
-            return a.price - b.price
-          case 'price_high':
-            return b.price - a.price
-          case 'name':
-            return a.name.localeCompare(b.name)
-          default:
-            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        }
-      })
-
-      const from = (page - 1) * itemsPerPage
-      const to = from + itemsPerPage
-      const paginatedProducts = filteredProducts.slice(from, to)
-
-      if (page === 1) {
-        setProducts(paginatedProducts)
-      } else {
-        setProducts(prev => [...prev, ...paginatedProducts])
-      }
-      setTotalCount(filteredProducts.length)
-      setHasMore(paginatedProducts.length === itemsPerPage)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const loadMore = () => {
-    setPage(prev => prev + 1)
-  }
-
-  if (loading && page === 1) {
+  if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {[...Array(8)].map((_, i) => (
+          <div key={i} className="animate-pulse">
+            <div className="aspect-square bg-gray-200 rounded-lg mb-4" />
+            <div className="space-y-2">
+              <div className="h-4 bg-gray-200 rounded w-3/4" />
+              <div className="h-3 bg-gray-200 rounded w-1/2" />
+              <div className="h-4 bg-gray-200 rounded w-1/3" />
+            </div>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-500">Error loading products: {error}</p>
+      </div>
+    )
+  }
+
+  if (products.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground">No products found matching your criteria.</p>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
-      {/* Results count */}
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
-          Showing {products.length} of {totalCount} products
-        </p>
-      </div>
-
-      {/* Products grid */}
-      {products.length > 0 ? (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-
-          {/* Load more button */}
-          {hasMore && (
-            <div className="text-center pt-8">
-              <Button 
-                onClick={loadMore} 
-                disabled={loading}
-                variant="outline"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Loading...
-                  </>
-                ) : (
-                  'Load More Products'
-                )}
-              </Button>
-            </div>
-          )}
-        </>
-      ) : (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground text-lg">No products found</p>
-          <p className="text-sm text-muted-foreground mt-2">
-            Try adjusting your search criteria or browse all products.
-          </p>
-        </div>
-      )}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {products.map((product) => (
+        <ProductCard key={product.id} product={product} />
+      ))}
     </div>
   )
 }
