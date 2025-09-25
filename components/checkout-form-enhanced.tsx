@@ -34,7 +34,8 @@ interface CheckoutFormEnhancedProps {
 }
 
 export function CheckoutFormEnhanced({ onOrderSubmit, loading = false }: CheckoutFormEnhancedProps) {
-  const { items, total, clearCart } = useCart()
+  const { items, getTotalPrice, clearCart } = useCart()
+  const total = getTotalPrice()
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('cod')
   const [selectedShippingMethod, setSelectedShippingMethod] = useState<string>('')
   const [shippingCost, setShippingCost] = useState<number>(0)
@@ -287,7 +288,7 @@ export function CheckoutFormEnhanced({ onOrderSubmit, loading = false }: Checkou
                   <div key={item.product.id} className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-gray-100 rounded-md flex-shrink-0">
                       <img
-                        src={item.product.image_url}
+                        src={item.product.image_url || '/placeholder.jpg'}
                         alt={item.product.name}
                         className="w-full h-full object-cover rounded-md"
                       />

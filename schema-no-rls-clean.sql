@@ -526,16 +526,18 @@ INSERT INTO public.products (name, slug, description, short_description, price, 
 ON CONFLICT (sku) DO NOTHING;
 
 -- Set admin role for existing user (admin@jonsstore.com)
+-- This user ID is from Supabase Auth: d6345ce2-bbb6-4cdc-94b6-3857c845e095
 UPDATE user_profiles 
 SET role = 'admin' 
 WHERE id = 'd6345ce2-bbb6-4cdc-94b6-3857c845e095';
 
 -- Insert admin profile if not exists
-INSERT INTO user_profiles (id, full_name, role, is_active)
-VALUES ('d6345ce2-bbb6-4cdc-94b6-3857c845e095', 'Admin User', 'admin', true)
+INSERT INTO user_profiles (id, full_name, role, is_active, created_at, updated_at)
+VALUES ('d6345ce2-bbb6-4cdc-94b6-3857c845e095', 'Admin User', 'admin', true, NOW(), NOW())
 ON CONFLICT (id) DO UPDATE SET 
   role = 'admin',
-  is_active = true;
+  is_active = true,
+  updated_at = NOW();
 
 -- =====================================================
 -- GRANT PERMISSIONS

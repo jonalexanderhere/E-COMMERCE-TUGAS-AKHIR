@@ -364,7 +364,7 @@ export function AdminDashboardEnhanced() {
                   <div key={product.id} className="border rounded-lg p-4">
                     <div className="aspect-square bg-gray-100 rounded-lg mb-4">
                       <img
-                        src={product.image_url}
+                        src={product.image_url || '/placeholder.jpg'}
                         alt={product.name}
                         className="w-full h-full object-cover rounded-lg"
                       />

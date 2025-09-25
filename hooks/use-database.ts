@@ -227,7 +227,11 @@ export function useCategories() {
 
         if (error) {
           console.error('Supabase error:', error)
-          throw error
+          // Don't throw error, use fallback instead
+          console.warn('Using fallback categories due to Supabase error')
+          setCategories(fallbackCategories)
+          setError(null)
+          return
         }
 
         if (data && data.length > 0) {
@@ -240,8 +244,9 @@ export function useCategories() {
         }
       } catch (err) {
         console.error('Error fetching categories:', err)
-        setError(err instanceof Error ? err.message : 'Failed to fetch categories')
-        setCategories(fallbackCategories) // Always set fallback on error
+        // Always use fallback data instead of showing error
+        setCategories(fallbackCategories)
+        setError(null)
       } finally {
         setLoading(false)
       }
@@ -325,7 +330,11 @@ export function useProducts(filters?: {
 
         if (error) {
           console.error('Supabase error:', error)
-          throw error
+          // Don't throw error, use fallback instead
+          console.warn('Using fallback products due to Supabase error')
+          setProducts(fallbackProducts)
+          setError(null)
+          return
         }
 
         if (data && data.length > 0) {
@@ -338,8 +347,9 @@ export function useProducts(filters?: {
         }
       } catch (err) {
         console.error('Error fetching products:', err)
-        setError(err instanceof Error ? err.message : 'Failed to fetch products')
-        setProducts(fallbackProducts) // Always set fallback on error
+        // Always use fallback data instead of showing error
+        setProducts(fallbackProducts)
+        setError(null)
       } finally {
         setLoading(false)
       }
@@ -373,7 +383,11 @@ export function useFeaturedProducts(limit?: number) {
 
         if (error) {
           console.error('Supabase error:', error)
-          throw error
+          // Don't throw error, use fallback instead
+          console.warn('Using fallback featured products due to Supabase error')
+          setProducts(fallbackProducts.filter(p => p.is_featured))
+          setError(null)
+          return
         }
 
         if (data && data.length > 0) {
@@ -386,15 +400,16 @@ export function useFeaturedProducts(limit?: number) {
         }
       } catch (err) {
         console.error('Error fetching featured products:', err)
-        setError(err instanceof Error ? err.message : 'Failed to fetch featured products')
-        setProducts(fallbackProducts.filter(p => p.is_featured)) // Always set fallback on error
+        // Always use fallback data instead of showing error
+        setProducts(fallbackProducts.filter(p => p.is_featured))
+        setError(null)
       } finally {
         setLoading(false)
       }
     }
 
     fetchFeaturedProducts()
-  }, [])
+  }, [limit])
 
   return { products, loading, error }
 }

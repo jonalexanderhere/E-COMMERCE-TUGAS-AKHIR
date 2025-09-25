@@ -98,7 +98,7 @@ export default function ProductPage() {
               {/* Gallery */}
               {product.gallery && product.gallery.length > 1 && (
                 <div className="grid grid-cols-4 gap-2">
-                  {product.gallery.slice(0, 4).map((image, index) => (
+                  {product.gallery.slice(0, 4).map((image: string, index: number) => (
                     <div key={index} className="aspect-square overflow-hidden rounded-lg bg-gray-100">
                       <Image
                         src={image}

@@ -1,58 +1,53 @@
-# Jon's Store - E-commerce Platform
+# 🛍️ Jon's Store - Modern E-Commerce Platform
 
-A modern, full-featured e-commerce platform built with Next.js 14, TypeScript, and Supabase. Features a complete shopping experience with Cash on Delivery (COD) support, multiple payment methods, and comprehensive order management.
+A comprehensive, full-stack e-commerce platform built with Next.js 14, Supabase, and modern web technologies. Features include Cash on Delivery (COD), multiple payment methods, admin dashboard, and real-time analytics.
 
-## 🚀 Features
+![Next.js](https://img.shields.io/badge/Next.js-14.2.5-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
+![Supabase](https://img.shields.io/badge/Supabase-Database-green)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-blue)
+![Vercel](https://img.shields.io/badge/Deployed-Vercel-black)
 
-### Core E-commerce Features
-- **Product Catalog**: Browse products with categories, search, and filtering
-- **Shopping Cart**: Add/remove items with real-time updates
-- **User Authentication**: Secure login/register system
-- **Order Management**: Complete order lifecycle tracking
+## ✨ Features
 
-### Payment & Shipping
-- **Cash on Delivery (COD)**: Pay when your order arrives
-- **Multiple Payment Methods**: 
-  - Bank Transfer
-  - Credit Card
-  - E-Wallet (OVO, GoPay, DANA, LinkAja)
-  - QRIS
-- **Flexible Shipping Options**:
-  - Regular Shipping (3-5 days)
-  - Express Shipping (1-2 days)
-  - Same Day Delivery
-  - Next Day Delivery
-- **Free Shipping**: Automatic free shipping for orders above threshold
+### 🛒 Customer Features
+- **Modern Product Catalog** - Browse products with advanced filtering and search
+- **Cash on Delivery (COD)** - Pay when your order arrives
+- **Multiple Payment Methods** - Credit Card, Bank Transfer, E-Wallet, QRIS
+- **Smart Shopping Cart** - Add to cart with real-time updates
+- **Order Tracking** - Track your orders from placement to delivery
+- **Responsive Design** - Works perfectly on mobile, tablet, and desktop
+- **Fast Performance** - Optimized for speed and user experience
 
-### Order Management
-- **Order Tracking**: Real-time order status updates
-- **COD Support**: Special handling for cash on delivery orders
-- **Order History**: Complete order history for customers
-- **Admin Dashboard**: Manage orders, products, and customers
+### 👨‍💼 Admin Features
+- **Comprehensive Dashboard** - Real-time analytics and insights
+- **Order Management** - Handle orders with COD-specific workflows
+- **Product Management** - Add, edit, and manage your product catalog
+- **Analytics & Reports** - Detailed sales and performance metrics
+- **User Management** - Manage customer accounts and permissions
+- **Role-Based Access** - Secure admin authentication
 
-### Technical Features
-- **Responsive Design**: Mobile-first approach
-- **Database Integration**: Supabase for data management
-- **Type Safety**: Full TypeScript implementation
-- **Modern UI**: Beautiful interface with Tailwind CSS
-- **Performance**: Optimized for speed and SEO
+### 💳 Payment & Shipping
+- **Cash on Delivery** - No upfront payment required
+- **Online Payments** - Secure payment processing
+- **Multiple Shipping Options** - Regular, Express, Same Day delivery
+- **Free Shipping Thresholds** - Automatic free shipping on qualifying orders
+- **Order Status Tracking** - Real-time order status updates
 
-## 🛠️ Tech Stack
+## 🚀 Quick Start
 
-- **Frontend**: Next.js 14, React 18, TypeScript
-- **Styling**: Tailwind CSS, Radix UI
-- **Database**: Supabase (PostgreSQL)
-- **Authentication**: Supabase Auth
-- **State Management**: Zustand
-- **Forms**: React Hook Form + Zod
-- **Icons**: Lucide React
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+- Supabase account
+- Git
 
-## 📦 Installation
+### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/jonsstore-ecommerce.git
-   cd jonsstore-ecommerce
+   git clone https://github.com/jonalexanderhere/E-COMMERCE-TUGAS-AKHIR.git
+   cd E-COMMERCE-TUGAS-AKHIR
    ```
 
 2. **Install dependencies**
@@ -65,96 +60,115 @@ A modern, full-featured e-commerce platform built with Next.js 14, TypeScript, a
    cp env.example .env.local
    ```
    
-   Fill in your Supabase credentials:
+   Update `.env.local` with your Supabase credentials:
    ```env
    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
    ```
 
 4. **Set up the database**
-   - Create a new Supabase project
-   - Run the SQL schema from `schema-no-rls-clean.sql`
-   - This will create all necessary tables and sample data
+   - Go to your Supabase dashboard
+   - Navigate to SQL Editor
+   - Run the `schema-no-rls-clean.sql` script
+   - This will create all tables, insert sample data, and set up the admin user
 
-5. **Run the development server**
+5. **Start the development server**
    ```bash
    npm run dev
    ```
 
-6. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
+6. **Access the application**
+   - Customer site: `http://localhost:3000`
+   - Admin dashboard: `http://localhost:3000/admin`
+   - Admin credentials: `admin@jonsstore.com` / `[Your Supabase Auth Password]`
+
+## 🏗️ Project Structure
+
+```
+├── app/                    # Next.js 14 App Router
+│   ├── admin/             # Admin dashboard pages
+│   ├── checkout/          # Checkout process
+│   ├── orders/            # Order management
+│   └── products/          # Product pages
+├── components/            # Reusable UI components
+│   ├── admin-*           # Admin-specific components
+│   ├── product-*         # Product-related components
+│   └── ui/                # Base UI components
+├── hooks/                 # Custom React hooks
+├── lib/                   # Utility functions and configurations
+├── schema-no-rls-clean.sql # Complete database schema
+└── setup-admin-user.sql   # Admin user setup script
+```
 
 ## 🗄️ Database Schema
 
-The application uses a comprehensive database schema with the following main tables:
+The application uses a comprehensive PostgreSQL schema with the following main entities:
 
-- **Products**: Product catalog with images, pricing, inventory
-- **Categories**: Product categorization
-- **Orders**: Order management with COD support
-- **Order Items**: Individual items in orders
-- **Payment Methods**: Available payment options
-- **Shipping Methods**: Delivery options
-- **User Profiles**: Customer information
-- **Cart Items**: Shopping cart functionality
+- **Products** - Product catalog with detailed information
+- **Categories** - Product categorization
+- **Orders** - Customer orders with COD support
+- **Order Items** - Individual items in orders
+- **Users** - Customer and admin accounts
+- **Payment Methods** - Available payment options
+- **Shipping Methods** - Delivery options
+- **Coupons** - Discount and promotion system
 
-## 💳 Payment Methods
+### Key Features:
+- **Row Level Security (RLS)** - Disabled for development, can be enabled for production
+- **Automatic Timestamps** - Created/updated timestamps for all records
+- **Order Number Generation** - Automatic order number creation
+- **Admin User Setup** - Pre-configured admin user
 
-### Cash on Delivery (COD)
-- Pay when your order arrives
-- No additional fees
-- Available for most shipping methods
-- Special order tracking for COD orders
+## 🔧 Configuration
 
-### Online Payments
-- **Bank Transfer**: Direct bank account transfer
-- **Credit Card**: Visa, Mastercard, JCB support
-- **E-Wallet**: OVO, GoPay, DANA, LinkAja integration
-- **QRIS**: QR code payment system
+### Supabase Setup
+1. Create a new Supabase project
+2. Run the `schema-no-rls-clean.sql` script in SQL Editor
+3. Enable Authentication in Supabase dashboard
+4. Create admin user with email: `admin@jonsstore.com`
+5. Update the user ID in the schema if different
 
-## 🚚 Shipping Options
+### Environment Variables
+```env
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
-- **Regular Shipping**: 3-5 business days (Rp 15,000)
-- **Express Shipping**: 1-2 business days (Rp 25,000)
-- **Same Day Delivery**: Same day delivery (Rp 50,000)
-- **Next Day Delivery**: Next business day (Rp 35,000)
-
-Free shipping available for orders above Rp 500,000.
-
-## 📱 Key Pages
-
-- **Home**: Featured products and categories
-- **Products**: Product catalog with filtering
-- **Product Detail**: Individual product pages
-- **Cart**: Shopping cart management
-- **Checkout**: Order placement with payment/shipping selection
-- **Orders**: Order history and tracking
-- **Order Detail**: Detailed order information with COD status
-
-## 🔧 Development
-
-### Project Structure
-```
-├── app/                    # Next.js 14 app directory
-├── components/            # Reusable UI components
-├── hooks/                 # Custom React hooks
-├── lib/                   # Utility functions and configurations
-├── schema-no-rls-clean.sql # Database schema
-└── README.md             # This file
+# Optional: For production
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```
 
-### Key Components
-- `CheckoutFormEnhanced`: Complete checkout with COD support
-- `PaymentMethods`: Payment method selection
-- `ShippingMethods`: Shipping option selection
-- `OrderStatusCOD`: Order tracking with COD status
-- `ProductCard`: Product display component
+## 📱 Admin Dashboard
 
-### Database Hooks
-- `useProducts`: Product data management
-- `useOrders`: Order management
-- `usePaymentMethods`: Payment options
-- `useShippingMethods`: Shipping options
-- `useCreateOrder`: Order creation
+Access the admin dashboard at `/admin` with the following features:
+
+### Dashboard Overview
+- Real-time sales metrics
+- Order statistics
+- Revenue analytics
+- COD vs Online payment breakdown
+- Top-selling products
+
+### Order Management
+- View all orders with filtering
+- Update order status
+- Handle COD orders specifically
+- Track order history
+- Export order data
+
+### Product Management
+- Add/edit products
+- Manage product categories
+- Set featured products
+- Inventory management
+- Bulk operations
+
+### Analytics
+- Sales performance metrics
+- Payment method analysis
+- Customer insights
+- Revenue trends
+- Export capabilities
 
 ## 🚀 Deployment
 
@@ -163,53 +177,110 @@ Free shipping available for orders above Rp 500,000.
 2. Set environment variables in Vercel dashboard
 3. Deploy automatically on push to main branch
 
-### Other Platforms
-The application can be deployed to any platform that supports Next.js:
-- Netlify
-- Railway
-- DigitalOcean App Platform
-- AWS Amplify
+### Manual Deployment
+1. Build the application: `npm run build`
+2. Start production server: `npm start`
+3. Configure your hosting platform
 
-## 📊 Admin Features
+## 🧪 Testing
 
-- **Order Management**: View and update order status
-- **Product Management**: Add/edit products and categories
-- **Customer Management**: View customer information
-- **COD Tracking**: Special handling for cash on delivery orders
-- **Analytics**: Order and sales reporting
+### Development Testing
+```bash
+# Run development server
+npm run dev
+
+# Test admin features
+# 1. Go to /admin
+# 2. Login with admin credentials
+# 3. Test all admin features
+
+# Test customer features
+# 1. Browse products
+# 2. Add to cart
+# 3. Test checkout with COD
+# 4. Test different payment methods
+```
+
+### Production Testing
+1. Deploy to staging environment
+2. Test all features thoroughly
+3. Verify admin dashboard functionality
+4. Test COD workflow end-to-end
+5. Verify payment processing
 
 ## 🔒 Security
 
-- Row Level Security (RLS) disabled for development
-- Secure authentication with Supabase
-- Input validation with Zod schemas
-- CSRF protection
-- SQL injection prevention
+- **Authentication** - Supabase Auth with role-based access
+- **Data Protection** - Row Level Security (RLS) ready
+- **Input Validation** - Client and server-side validation
+- **Secure Payments** - PCI-compliant payment processing
+- **Admin Access** - Protected admin routes
+
+## 📊 Performance
+
+- **Next.js 14** - Latest framework with App Router
+- **Image Optimization** - Automatic image optimization
+- **Code Splitting** - Automatic code splitting
+- **Caching** - Intelligent caching strategies
+- **Database Optimization** - Indexed queries and efficient schema
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
 5. Open a Pull Request
 
-## 📄 License
+## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🆘 Support
 
-For support, email admin@jonsstore.com or create an issue in the GitHub repository.
+### Common Issues
+
+**Build Errors**
+- Ensure all dependencies are installed: `npm install`
+- Check TypeScript errors: `npm run build`
+- Verify environment variables are set
+
+**Database Issues**
+- Run the complete schema script
+- Check Supabase connection
+- Verify RLS policies if enabled
+
+**Admin Access Issues**
+- Verify admin user exists in Supabase Auth
+- Check user role in user_profiles table
+- Ensure correct user ID in schema
+
+### Getting Help
+- Check the [Issues](https://github.com/jonalexanderhere/E-COMMERCE-TUGAS-AKHIR/issues) page
+- Create a new issue with detailed description
+- Include error messages and steps to reproduce
+
+## 🎯 Roadmap
+
+- [ ] Mobile app development
+- [ ] Advanced analytics dashboard
+- [ ] Multi-language support
+- [ ] Advanced inventory management
+- [ ] Customer reviews and ratings
+- [ ] Social media integration
+- [ ] Advanced coupon system
+- [ ] API documentation
 
 ## 🙏 Acknowledgments
 
-- [Next.js](https://nextjs.org/) for the amazing framework
-- [Supabase](https://supabase.com/) for the backend services
-- [Tailwind CSS](https://tailwindcss.com/) for styling
-- [Radix UI](https://www.radix-ui.com/) for accessible components
-- [Lucide](https://lucide.dev/) for beautiful icons
+- **Next.js Team** - For the amazing framework
+- **Supabase Team** - For the powerful backend platform
+- **Vercel Team** - For seamless deployment
+- **Tailwind CSS** - For the utility-first CSS framework
+- **Lucide Icons** - For beautiful icons
 
 ---
 
-**Built with ❤️ by Jon's Store Team**
+**Built with ❤️ by Jon Alexander**
+
+*Ready for production deployment and presentation!*

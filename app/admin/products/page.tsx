@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { AdminAuth } from '@/components/admin-auth'
+import { AdminNav } from '@/components/admin-nav'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -42,7 +43,7 @@ export default function AdminProductsPage() {
     return matchesSearch && matchesCategory && matchesStatus
   })
 
-  const categories = [...new Set(products.map(p => p.category))]
+  const categories = Array.from(new Set(products.map(p => p.category)))
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -155,11 +156,11 @@ export default function AdminProductsPage() {
             {filteredProducts.map((product) => (
               <Card key={product.id} className="overflow-hidden">
                 <div className="aspect-square bg-gray-100">
-                  <img
-                    src={product.image_url}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                  />
+                    <img
+                      src={product.image_url || '/placeholder.jpg'}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
                 </div>
                 <CardContent className="p-4">
                   <div className="space-y-2">
@@ -203,7 +204,7 @@ export default function AdminProductsPage() {
                   <div className="flex items-center space-x-4">
                     <div className="w-16 h-16 bg-gray-100 rounded-lg flex-shrink-0">
                       <img
-                        src={product.image_url}
+                        src={product.image_url || '/placeholder.jpg'}
                         alt={product.name}
                         className="w-full h-full object-cover rounded-lg"
                       />

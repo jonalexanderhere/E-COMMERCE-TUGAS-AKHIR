@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { AdminAuth } from '@/components/admin-auth'
+import { AdminNav } from '@/components/admin-nav'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'

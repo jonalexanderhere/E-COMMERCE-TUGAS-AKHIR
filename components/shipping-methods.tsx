@@ -219,7 +219,7 @@ export function ShippingMethods({
                       </div>
                       <p className="text-sm text-muted-foreground">{method.description}</p>
                       <div className="flex items-center space-x-4 mt-2 text-xs text-muted-foreground">
-                        <span>⏱️ {getEstimatedDays}</span>
+                        <span>⏱️ {getEstimatedDays(method)}</span>
                         {isFree && (
                           <span className="text-green-600">✓ Free shipping</span>
                         )}
