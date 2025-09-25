@@ -144,9 +144,19 @@ CREATE TABLE IF NOT EXISTS public.orders (
     user_id uuid NOT NULL,
     order_number character varying(50) NOT NULL,
     total_amount numeric(10,2) NOT NULL,
+    subtotal numeric(10,2) NOT NULL,
+    tax_amount numeric(10,2) DEFAULT 0 NOT NULL,
+    shipping_cost numeric(10,2) DEFAULT 0 NOT NULL,
+    discount_amount numeric(10,2) DEFAULT 0 NOT NULL,
     status character varying(50) DEFAULT 'pending' NOT NULL,
+    payment_status character varying(50) DEFAULT 'pending' NOT NULL,
+    payment_method character varying(50) DEFAULT 'cod' NOT NULL,
+    payment_reference text,
     shipping_address text,
     billing_address text,
+    shipping_method character varying(100),
+    tracking_number text,
+    estimated_delivery date,
     notes text,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
@@ -260,6 +270,57 @@ CREATE TABLE IF NOT EXISTS public.site_settings (
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
     CONSTRAINT site_settings_pkey PRIMARY KEY (id),
     CONSTRAINT site_settings_key_key UNIQUE (key)
+);
+
+-- Payment methods table
+CREATE TABLE IF NOT EXISTS public.payment_methods (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    name character varying(100) NOT NULL,
+    code character varying(50) NOT NULL,
+    description text,
+    icon_url text,
+    is_active boolean DEFAULT true NOT NULL,
+    is_cod boolean DEFAULT false NOT NULL,
+    processing_fee numeric(10,2) DEFAULT 0 NOT NULL,
+    min_amount numeric(10,2),
+    max_amount numeric(10,2),
+    display_order integer DEFAULT 0 NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT payment_methods_pkey PRIMARY KEY (id),
+    CONSTRAINT payment_methods_code_key UNIQUE (code)
+);
+
+-- Shipping methods table
+CREATE TABLE IF NOT EXISTS public.shipping_methods (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    name character varying(100) NOT NULL,
+    code character varying(50) NOT NULL,
+    description text,
+    base_cost numeric(10,2) NOT NULL,
+    cost_per_kg numeric(10,2) DEFAULT 0 NOT NULL,
+    free_shipping_threshold numeric(10,2),
+    estimated_days_min integer DEFAULT 1 NOT NULL,
+    estimated_days_max integer DEFAULT 3 NOT NULL,
+    is_active boolean DEFAULT true NOT NULL,
+    is_cod_available boolean DEFAULT true NOT NULL,
+    display_order integer DEFAULT 0 NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT shipping_methods_pkey PRIMARY KEY (id),
+    CONSTRAINT shipping_methods_code_key UNIQUE (code)
+);
+
+-- Order status history table
+CREATE TABLE IF NOT EXISTS public.order_status_history (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    order_id uuid NOT NULL,
+    status character varying(50) NOT NULL,
+    notes text,
+    created_by uuid,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT order_status_history_pkey PRIMARY KEY (id),
+    CONSTRAINT order_status_history_order_id_fkey FOREIGN KEY (order_id) REFERENCES public.orders(id) ON DELETE CASCADE
 );
 
 -- =====================================================
@@ -418,6 +479,23 @@ INSERT INTO public.coupons (code, description, discount_type, discount_value, mi
 ('WELCOME10', 'Welcome discount for new customers', 'percentage', 10, 100000, 100, NOW() + INTERVAL '30 days'),
 ('SAVE50K', 'Save 50K on orders over 500K', 'fixed', 50000, 500000, 50, NOW() + INTERVAL '15 days'),
 ('FREESHIP', 'Free shipping on all orders', 'fixed', 25000, 0, 200, NOW() + INTERVAL '7 days')
+ON CONFLICT (code) DO NOTHING;
+
+-- Insert payment methods
+INSERT INTO public.payment_methods (name, code, description, icon_url, is_active, is_cod, processing_fee, min_amount, max_amount, display_order) VALUES
+('Cash on Delivery', 'cod', 'Pay when your order arrives', 'https://cdn-icons-png.flaticon.com/512/157/157933.png', true, true, 0, 0, 10000000, 1),
+('Bank Transfer', 'bank_transfer', 'Transfer to our bank account', 'https://cdn-icons-png.flaticon.com/512/157/157933.png', true, false, 0, 0, 10000000, 2),
+('Credit Card', 'credit_card', 'Pay with Visa, Mastercard, or JCB', 'https://cdn-icons-png.flaticon.com/512/179/179457.png', true, false, 2500, 10000, 50000000, 3),
+('E-Wallet', 'ewallet', 'Pay with OVO, GoPay, DANA, or LinkAja', 'https://cdn-icons-png.flaticon.com/512/179/179457.png', true, false, 0, 10000, 10000000, 4),
+('QRIS', 'qris', 'Scan QR code to pay', 'https://cdn-icons-png.flaticon.com/512/179/179457.png', true, false, 0, 10000, 5000000, 5)
+ON CONFLICT (code) DO NOTHING;
+
+-- Insert shipping methods
+INSERT INTO public.shipping_methods (name, code, description, base_cost, cost_per_kg, free_shipping_threshold, estimated_days_min, estimated_days_max, is_active, is_cod_available, display_order) VALUES
+('Regular Shipping', 'regular', 'Standard delivery service', 15000, 5000, 500000, 3, 5, true, true, 1),
+('Express Shipping', 'express', 'Fast delivery service', 25000, 8000, 1000000, 1, 2, true, true, 2),
+('Same Day Delivery', 'same_day', 'Delivery on the same day', 50000, 10000, 2000000, 0, 1, true, false, 3),
+('Next Day Delivery', 'next_day', 'Delivery the next day', 35000, 8000, 1500000, 1, 1, true, true, 4)
 ON CONFLICT (code) DO NOTHING;
 
 -- Insert sample products

@@ -352,7 +352,7 @@ export function useProducts(filters?: {
 }
 
 // Hook untuk fetch featured products
-export function useFeaturedProducts() {
+export function useFeaturedProducts(limit?: number) {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -369,7 +369,7 @@ export function useFeaturedProducts() {
           .eq('is_active', true)
           .eq('is_featured', true)
           .order('created_at', { ascending: false })
-          .limit(8)
+          .limit(limit || 8)
 
         if (error) {
           console.error('Supabase error:', error)
@@ -602,4 +602,243 @@ export function useProductsByPriceRange(minPrice: number, maxPrice: number) {
   }, [minPrice, maxPrice])
 
   return { products, loading, error }
+}
+
+// Hook untuk fetch payment methods
+export function usePaymentMethods() {
+  const [methods, setMethods] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchPaymentMethods() {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        const { data, error } = await supabase
+          .from('payment_methods')
+          .select('*')
+          .eq('is_active', true)
+          .order('display_order', { ascending: true })
+
+        if (error) {
+          console.error('Supabase error:', error)
+          throw error
+        }
+
+        if (data && data.length > 0) {
+          setMethods(data)
+          setError(null)
+        } else {
+          // Fallback data
+          const fallbackMethods = [
+            {
+              id: '1',
+              name: 'Cash on Delivery',
+              code: 'cod',
+              description: 'Pay when your order arrives',
+              is_active: true,
+              is_cod: true,
+              processing_fee: 0,
+              display_order: 1
+            },
+            {
+              id: '2',
+              name: 'Bank Transfer',
+              code: 'bank_transfer',
+              description: 'Transfer to our bank account',
+              is_active: true,
+              is_cod: false,
+              processing_fee: 0,
+              display_order: 2
+            },
+            {
+              id: '3',
+              name: 'Credit Card',
+              code: 'credit_card',
+              description: 'Pay with Visa, Mastercard, or JCB',
+              is_active: true,
+              is_cod: false,
+              processing_fee: 2500,
+              display_order: 3
+            }
+          ]
+          setMethods(fallbackMethods)
+          setError(null)
+        }
+      } catch (err) {
+        console.error('Error fetching payment methods:', err)
+        setError(err instanceof Error ? err.message : 'Failed to fetch payment methods')
+        setMethods([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchPaymentMethods()
+  }, [])
+
+  return { methods, loading, error }
+}
+
+// Hook untuk fetch shipping methods
+export function useShippingMethods() {
+  const [methods, setMethods] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchShippingMethods() {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        const { data, error } = await supabase
+          .from('shipping_methods')
+          .select('*')
+          .eq('is_active', true)
+          .order('display_order', { ascending: true })
+
+        if (error) {
+          console.error('Supabase error:', error)
+          throw error
+        }
+
+        if (data && data.length > 0) {
+          setMethods(data)
+          setError(null)
+        } else {
+          // Fallback data
+          const fallbackMethods = [
+            {
+              id: '1',
+              name: 'Regular Shipping',
+              code: 'regular',
+              description: 'Standard delivery service',
+              base_cost: 15000,
+              cost_per_kg: 5000,
+              free_shipping_threshold: 500000,
+              estimated_days_min: 3,
+              estimated_days_max: 5,
+              is_active: true,
+              is_cod_available: true,
+              display_order: 1
+            },
+            {
+              id: '2',
+              name: 'Express Shipping',
+              code: 'express',
+              description: 'Fast delivery service',
+              base_cost: 25000,
+              cost_per_kg: 8000,
+              free_shipping_threshold: 1000000,
+              estimated_days_min: 1,
+              estimated_days_max: 2,
+              is_active: true,
+              is_cod_available: true,
+              display_order: 2
+            }
+          ]
+          setMethods(fallbackMethods)
+          setError(null)
+        }
+      } catch (err) {
+        console.error('Error fetching shipping methods:', err)
+        setError(err instanceof Error ? err.message : 'Failed to fetch shipping methods')
+        setMethods([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchShippingMethods()
+  }, [])
+
+  return { methods, loading, error }
+}
+
+// Hook untuk create order
+export function useCreateOrder() {
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const createOrder = async (orderData: any) => {
+    try {
+      setLoading(true)
+      setError(null)
+      
+      const { data, error } = await supabase
+        .from('orders')
+        .insert([orderData])
+        .select()
+        .single()
+
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
+
+      return data
+    } catch (err) {
+      console.error('Error creating order:', err)
+      setError(err instanceof Error ? err.message : 'Failed to create order')
+      throw err
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return { createOrder, loading, error }
+}
+
+// Hook untuk fetch orders
+export function useOrders(userId?: string) {
+  const [orders, setOrders] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchOrders() {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        let query = supabase
+          .from('orders')
+          .select(`
+            *,
+            order_items (
+              *,
+              products (*)
+            )
+          `)
+          .order('created_at', { ascending: false })
+
+        if (userId) {
+          query = query.eq('user_id', userId)
+        }
+
+        const { data, error } = await query
+
+        if (error) {
+          console.error('Supabase error:', error)
+          throw error
+        }
+
+        setOrders(data || [])
+        setError(null)
+      } catch (err) {
+        console.error('Error fetching orders:', err)
+        setError(err instanceof Error ? err.message : 'Failed to fetch orders')
+        setOrders([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchOrders()
+  }, [userId])
+
+  return { orders, loading, error }
 }

@@ -1,15 +1,33 @@
 // Mock data for development when Supabase is not available
 // This file is deprecated - use database hooks instead
 export const mockProducts = [
-  // Electronics
+  // Electronics - Premium Products
   {
     id: '1',
     name: 'iPhone 15 Pro',
-    description: 'Latest iPhone with advanced camera system and A17 Pro chip',
+    description: 'Latest iPhone with advanced camera system and A17 Pro chip. Features titanium build, A17 Pro chip, and advanced camera system with 5x optical zoom.',
     price: 15999000,
-    image_url: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=400&fit=crop',
+    compare_price: 17999000,
+    cost_price: 12000000,
+    sku: 'IPH15PRO',
+    barcode: '1234567890001',
+    weight: 0.2,
+    dimensions: { length: 15.0, width: 7.0, height: 0.8 },
+    image_url: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=600&fit=crop',
+    gallery: [
+      'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=600&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&h=600&fit=crop'
+    ],
     category: 'Electronics',
     stock: 50,
+    min_stock: 5,
+    max_stock: 100,
+    is_active: true,
+    is_featured: true,
+    is_digital: false,
+    tags: ['smartphone', 'apple', 'premium', 'camera'],
+    meta_title: 'iPhone 15 Pro - Premium Smartphone',
+    meta_description: 'Latest iPhone with advanced camera system and A17 Pro chip',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
   },
